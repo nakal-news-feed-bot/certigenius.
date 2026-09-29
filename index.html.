@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CertiGenius AI - Penjana Sijil Pintar</title>
+  
+  <!-- TailWind CSS untuk Antaramuka Moden -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jsPDF Library untuk Jana PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2canvas untuk menukar paparan sijil ke imej PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Font Google Premium -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Pinyon+Script&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .font-cursive { font-family: 'Pinyon Script', cursive; }
+    .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Ukuran Sijil Nisbah A4 (Horizontal) */
+    #certificate-preview {
+      width: 842px;
+      height: 595px;
+      position: relative;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
+
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-amber-400">CertiGenius AI</h1>
+      <p class="text-slate-400 text-sm mt-1">Penjana Sijil Pintar berasaskan AI & Sedia Cetak</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Panel Borang Input (Kiri) -->
+      <div class="lg:col-span-4 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl space-y-4">
+        <h2 class="text-lg font-semibold text-amber-300 border-b border-slate-700 pb-2">Tetapan Sijil</h2>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Gemini API Key</label>
+          <input type="password" id="apiKey" placeholder="Masukkan Gemini API Key" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tema Latar Belakang AI</label>
+          <select id="themeSelect" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+            <option value="gold">Mewah (Emas & Biru Gelap)</option>
+            <option value="emerald">Moden (Zamrud & Rose Gold)</option>
+            <option value="classic">Klasik (Burgundy & Diploma)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tajuk Program / Acara</label>
+          <input type="text" id="inputEvent" value="BENGKEL KEPIMPINAN GURU 2026" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Nama Penerima</label>
+          <input type="text" id="inputName" value="CIKGU AHMAD DANIEL B. ROSLI" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Pencapaian / Peranan</label>
+          <input type="text" id="inputRole" value="Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tarikh Program</label>
+          <input type="text" id="inputDate" value="30 September 2026" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
+        </div>
+
+        <div class="pt-2 space-y-2">
+          <button onclick="generateAIBackground()" id="btnGenerateAI" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-2.5 rounded transition shadow-lg text-sm">
+            ✨ Jana Latar Belakang AI
+          </button>
+          <button onclick="downloadPDF()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded transition shadow-lg text-sm">
+            📄 Muat Turun Sijil PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Prapapar Sijil (Kanan) -->
+      <div class="lg:col-span-8 flex flex-col items-center justify-center overflow-x-auto">
+        <div class="shadow-2xl border border-slate-700 rounded-lg overflow-hidden bg-white text-slate-900" id="certificate-preview">
+          
+          <!-- Latar Belakang Imej AI / Fallback -->
+          <div id="bgContainer" class="absolute inset-0 bg-slate-50 flex items-center justify-center border-[16px] border-amber-600/20">
+            <!-- Frame Deosrator Lalai -->
+            <div class="absolute inset-3 border-2 border-amber-600/40 pointer-events-none"></div>
+          </div>
+
+          <!-- Overlay Teks Design Expert -->
+          <div class="absolute inset-0 p-12 flex flex-col justify-between text-center z-10">
+            
+            <!-- Header Sijil -->
+            <div class="mt-4">
+              <p class="font-cinzel text-xs tracking-[0.3em] text-amber-700 font-bold uppercase">Sijil Penghargaan</p>
+              <h2 id="textEvent" class="font-cinzel text-xl font-bold text-slate-800 mt-2 tracking-wide">BENGKEL KEPIMPINAN GURU 2026</h2>
+            </div>
+
+            <!-- Penerima -->
+            <div class="my-auto">
+              <p class="text-xs text-slate-500 italic">Dengan ini disahkan bahawa</p>
+              <h3 id="textName" class="font-cursive text-5xl text-amber-900 my-3">Cikgu Ahmad Daniel B. Rosli</h3>
+              <p id="textRole" class="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
+            </div>
+
+            <!-- Footer & ID Unik -->
+            <div class="flex justify-between items-end border-t border-slate-300/60 pt-4 text-left">
+              <div>
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Tarikh</p>
+                <p id="textDate" class="text-xs font-semibold text-slate-700">30 September 2026</p>
+              </div>
+
+              <!-- Nombor ID Unik Automatik -->
+              <div class="text-center">
+                <p class="text-[9px] text-slate-400 uppercase tracking-widest">No. ID Ketulenan Sijil</p>
+                <p id="textCertID" class="font-mono text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mt-0.5">CERT-2026-X89K</p>
+              </div>
+
+              <div class="text-right">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Tandatangan</p>
+                <p class="font-cursive text-2xl text-slate-800">Penganjur Utama</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <p class="text-xs text-slate-500 mt-3">* Paparan di atas diselaraskan mengikut saiz standard A4 Landscape.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 1. Auto-Jana No ID Unik Sijil
+    function generateUniqueID() {
+      const year = new Date().getFullYear();
+      const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+      return `CERT-${year}-${randomStr}`;
+    }
+
+    // Set No ID unik semasa aplikasi dibuka
+    document.getElementById('textCertID').innerText = generateUniqueID();
+
+    // 2. Kemaskini Teks Prapapar Secara Masa-Nyata (Real-Time)
+    const inputs = ['Event', 'Name', 'Role', 'Date'];
+    inputs.forEach(field => {
+      document.getElementById(`input${field}`).addEventListener('input', (e) => {
+        document.getElementById(`text${field}`).innerText = e.target.value;
+      });
+    });
+
+    // 3. Panggilan API Gemini untuk Jana Latar Belakang Sijil
+    async function generateAIBackground() {
+      const apiKey = document.getElementById('apiKey').value;
+      const theme = document.getElementById('themeSelect').value;
+      const btn = document.getElementById('btnGenerateAI');
+
+      if (!apiKey) {
+        alert("Sila masukkan Gemini API Key anda terlebih dahulu!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Memproses Reka Bentuk AI...";
+
+      // Prompt khas berdasarkan pilihan tema
+      let themePrompt = "A professional elegant certificate border with golden filigree, navy blue frame, clean empty white center.";
+      if (theme === 'emerald') {
+        themePrompt = "Modern minimalist certificate background, emerald green and rose gold lines border, clean empty cream center.";
+      } else if (theme === 'classic') {
+        themePrompt = "Traditional university diploma background, burgundy guilloche border, vintage parchment paper empty center.";
+      }
+
+      try {
+        // Panggilan API Gemini (Menggunakan model Imagen / Image Generation via Imagen API)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instances: [{ prompt: `${themePrompt} high resolution, A4 landscape aspect ratio, no text in middle.` }],
+            parameters: { sampleCount: 1, aspectRatio: "4:3" }
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.predictions && data.predictions[0].bytesBase64Encoded) {
+          const imageBase64 = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
+          document.getElementById('bgContainer').innerHTML = `<img src="${imageBase64}" class="w-full h-full object-cover">`;
+        } else {
+          alert("Gagal menjana imej. Sila pastikan API Key betul dan kuota API mencukupi.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Ralat semasa menyambung ke Gemini API.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "✨ Jana Latar Belakang AI";
+      }
+    }
+
+    // 4. Penjana PDF (Menukar Paparan HTML kepada PDF berkualiti tinggi)
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const element = document.getElementById('certificate-preview');
+
+      // Tukar elemen HTML kepada Kanvas Imej
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      // Cipta Dokumen PDF Saiz A4 Landscape
+      const pdf = new jsPDF('landscape', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      const recipientName = document.getElementById('inputName').value || 'Peserta';
+      pdf.save(`Sijil_${recipientName.replace(/\s+/g, '_')}.pdf`);
+    }
+  </script>
+</body>
+</html>
+

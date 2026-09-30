@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI Pro 4.4 - Ultimate Commercial Edition</title>
+  <title>CertiGenius AI Pro 4.6 - Dynamic License Edition</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -29,19 +29,49 @@
       user-select: none;
     }
 
-    /* Fixed 1.5 x 2 Inci Logo Box (144px x 108px @ 96DPI) */
     .fixed-logo-box {
       width: 144px;
       height: 108px;
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-6">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-6 relative">
 
+  <!-- SKRIN KUNCI LESEN (GOOGLE SHEETS OVERLAY) -->
+  <div id="licenseModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-amber-500/40 p-6 md:p-8 rounded-2xl max-w-md w-full shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto text-3xl">
+        🔑
+      </div>
+      <h2 class="text-2xl font-bold text-amber-400">Pengesahan Kunci Lesen Unik</h2>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Sila masukkan <span class="text-amber-300 font-semibold">Kunci Lesen Sekali Guna</span> yang anda terima selepas pembayaran T&G.
+      </p>
+
+      <div class="space-y-2 text-left">
+        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-300">Kunci Lesen Pembeli</label>
+        <input type="text" id="inputLicenseKey" placeholder="Contoh: KEY-AAA1" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-lg p-3 text-sm text-center font-mono text-amber-300 outline-none uppercase transition">
+        <p id="licenseError" class="text-xs text-red-400 font-semibold hidden text-center"></p>
+      </div>
+
+      <button id="btnActivate" onclick="validateLicenseWithGoogle()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-3 rounded-lg shadow-lg text-sm transition transform active:scale-95">
+        🔓 Aktifkan Lesen Sekarang
+      </button>
+
+      <div class="border-t border-slate-800 pt-3 text-[11px] text-slate-500">
+        Setiap kunci hanya boleh diaktifkan sekali sahaja pada peranti anda.
+      </div>
+    </div>
+  </div>
+
+  <!-- UTAMA APLIKASI -->
   <div class="max-w-7xl mx-auto">
     <header class="mb-6 text-center">
-      <h1 class="text-3xl font-bold text-amber-400">CertiGenius AI Pro 4.4</h1>
-      <p class="text-slate-400 text-xs mt-1">Sistem Penjana Sijil Precision: Kawalan Penuh X/Y, Fixed Logo 1.5x2 & Font Size Slider</p>
+      <div class="inline-block bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] uppercase font-bold px-3 py-1 rounded-full mb-2">
+        Status Lesen: <span id="licenseStatusTag" class="text-red-400">Terkunci 🔒</span>
+      </div>
+      <h1 class="text-3xl font-bold text-amber-400">CertiGenius AI Pro 4.6</h1>
+      <p class="text-slate-400 text-xs mt-1">Sistem Penjana Sijil Precision: Google Sheets Live One-Time License Security</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -49,7 +79,6 @@
       <!-- Panel Kawalan (Kiri) -->
       <div class="lg:col-span-5 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl space-y-4 max-h-[88vh] overflow-y-auto text-xs">
         
-        <!-- Pilihan Orientasi -->
         <div class="bg-slate-900 p-3 rounded-lg border border-amber-500/30">
           <label class="block font-bold text-amber-400 uppercase tracking-wider mb-2">📐 Orientasi Sijil</label>
           <div class="grid grid-cols-2 gap-2">
@@ -62,7 +91,6 @@
           </div>
         </div>
 
-        <!-- API Key & Custom Background Input -->
         <div class="space-y-2">
           <div>
             <label class="block font-semibold uppercase text-slate-300 mb-1">Gemini API Key (Opsional / Pro)</label>
@@ -75,7 +103,6 @@
           </div>
         </div>
 
-        <!-- Pilihan Font & Tema -->
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-semibold uppercase text-slate-300 mb-1">Font Nama Penerima</label>
@@ -96,7 +123,6 @@
           </div>
         </div>
 
-        <!-- Tetapan Teks & Logo -->
         <div class="space-y-3 border-t border-slate-700 pt-3">
           <h3 class="font-bold text-amber-300 border-b border-slate-700 pb-1">Kandungan Teks & Logo</h3>
 
@@ -137,11 +163,9 @@
           </div>
         </div>
 
-        <!-- Pelarasan Kedudukan & Saiz Teks (Y, X & Size Slider) -->
         <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-3">
           <h3 class="font-bold text-amber-400 mb-1">🎯 Kawalan Slider Kedudukan & Saiz Teks</h3>
 
-          <!-- Logo Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">1. Logo (Fixed 1.5x2 Inci)</span>
             <div class="grid grid-cols-3 gap-2">
@@ -160,7 +184,6 @@
             </div>
           </div>
 
-          <!-- Penganjur Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">2. Nama Penganjur</span>
             <div class="grid grid-cols-3 gap-2">
@@ -179,7 +202,6 @@
             </div>
           </div>
 
-          <!-- Tajuk Program Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">3. Tajuk Program</span>
             <div class="grid grid-cols-3 gap-2">
@@ -198,7 +220,6 @@
             </div>
           </div>
 
-          <!-- Nama Penerima Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">4. Nama Penerima</span>
             <div class="grid grid-cols-3 gap-2">
@@ -217,7 +238,6 @@
             </div>
           </div>
 
-          <!-- Peranan Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">5. Peranan / Pencapaian</span>
             <div class="grid grid-cols-3 gap-2">
@@ -236,14 +256,14 @@
             </div>
           </div>
 
-          <!-- Footer Slider -->
           <div>
             <span class="block font-bold text-slate-300 mb-1">6. Footer (Tarikh/ID/Tandatangan)</span>
             <div class="grid grid-cols-3 gap-2">
               <div>
                 <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="70" max="95" value="88" oninput="adjustY('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
-              </div>
+              </divhttps://script.google.com/macros/s/AKfycbxzhrdN-hXn8X83pbzI3oXPjDPbs_S9oP35MfT68OI750eqkJ6Fa2o6QHIaARBHgdgV/exec
+>
               <div>
                 <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="4" max="35" value="12" oninput="adjustX('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
@@ -257,13 +277,11 @@
 
         </div>
 
-        <!-- Bulk Import -->
         <div class="border-t border-slate-700 pt-2">
           <label class="block text-amber-400 font-bold mb-1">📂 Muat Naik Excel / CSV (Bulk Processing)</label>
           <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="w-full bg-slate-900 border border-slate-700 rounded p-1 text-[10px]">
         </div>
 
-        <!-- Action Buttons -->
         <div class="pt-2 space-y-2">
           <button onclick="generateAIBackground()" id="btnGenerateAI" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded shadow text-xs">
             ✨ Jana Latar Belakang AI
@@ -284,41 +302,34 @@
       <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-auto">
         <div class="shadow-2xl border border-slate-700 rounded-lg overflow-hidden bg-white text-slate-900 cert-landscape transition-all duration-300 relative" id="certificate-preview">
           
-          <!-- Container Background -->
           <div id="bgContainer" class="absolute inset-0 bg-slate-50 border-[16px] border-amber-800/10 flex items-center justify-center">
             <div class="absolute inset-3 border border-amber-600/30 pointer-events-none"></div>
           </div>
 
-          <!-- Elemen Logo (Fixed 1.5x2 Inci Frame) -->
           <div id="elLogo" class="draggable-text left-0 right-0 top-[6%] flex justify-center z-10 pointer-events-none">
             <div id="logoContainer" class="fixed-logo-box flex items-center justify-center overflow-hidden">
               <img id="logoPreview" src="" class="max-w-full max-h-full object-contain hidden transition-all duration-150">
             </div>
           </div>
 
-          <!-- Elemen Penganjur -->
           <div id="elOrganizer" class="draggable-text left-[8%] right-[8%] top-[23%] text-center z-10">
             <p id="textOrganizer" class="font-cinzel text-[10px] tracking-[0.25em] text-slate-500 font-bold uppercase">KEMENTERIAN PENDIDIKAN MALAYSIA</p>
             <p class="font-cinzel text-xs tracking-[0.3em] text-amber-700 font-bold uppercase mt-0.5">SIJIL PENGHARGAAN</p>
           </div>
 
-          <!-- Elemen Tajuk Program -->
           <div id="elEvent" class="draggable-text left-[8%] right-[8%] top-[31%] text-center z-10">
             <h2 id="textEvent" class="font-cinzel text-[18px] font-bold text-slate-800 tracking-wide">BENGKEL KEPIMPINAN GURU 2026</h2>
           </div>
 
-          <!-- Elemen Nama Penerima -->
           <div id="elName" class="draggable-text left-[8%] right-[8%] top-[50%] text-center z-10">
             <p class="text-xs text-slate-500 italic">Dengan ini disahkan bahawa</p>
             <h3 id="textName" class="font-cursive text-[36px] text-amber-900 my-1">Cikgu Ahmad Daniel B. Rosli</h3>
           </div>
 
-          <!-- Elemen Peranan -->
           <div id="elRole" class="draggable-text left-[8%] right-[8%] top-[65%] text-center z-10">
             <p id="textRole" class="text-[12px] text-slate-600 max-w-md mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
           </div>
 
-          <!-- Footer (Tarikh, No. ID Ketulenan, Tandatangan) -->
           <div id="elFooter" class="draggable-text left-[12%] right-[12%] top-[88%] flex justify-between items-end border-t border-slate-300/80 pt-2 z-10">
             <div>
               <p class="text-[9px] text-slate-400 uppercase">Tarikh</p>
@@ -343,6 +354,57 @@
   </div>
 
   <script>
+    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI!
+    const GOOGLE_SCRIPT_URL = "URL_WEB_APP_GOOGLE_ANDA_DI_SINI";
+
+    window.onload = function() {
+      if (localStorage.getItem("certigenius_active_v46") === "true") {
+        document.getElementById("licenseModal").classList.add("hidden");
+        document.getElementById("licenseStatusTag").innerText = "Aktif (Pro) 🔓";
+        document.getElementById("licenseStatusTag").className = "text-emerald-400 font-bold";
+      }
+    };
+
+    async function validateLicenseWithGoogle() {
+      const input = document.getElementById("inputLicenseKey").value.trim();
+      const err = document.getElementById("licenseError");
+      const btn = document.getElementById("btnActivate");
+
+      if (!input) {
+        err.innerText = "❌ Sila masukkan kunci lesen!";
+        err.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ Menyemak Kunci Lesen...";
+      err.classList.add("hidden");
+
+      try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}`);
+        const result = await response.json();
+
+        if (result.status === "SUCCESS") {
+          localStorage.setItem("certigenius_active_v46", "true");
+          document.getElementById("licenseModal").classList.add("hidden");
+          document.getElementById("licenseStatusTag").innerText = "Aktif (Pro) 🔓";
+          document.getElementById("licenseStatusTag").className = "text-emerald-400 font-bold";
+        } else if (result.status === "ALREADY_USED") {
+          err.innerText = "❌ Kunci lesen ini telah pun digunakan!";
+          err.classList.remove("hidden");
+        } else {
+          err.innerText = "❌ Kunci lesen tidak sah!";
+          err.classList.remove("hidden");
+        }
+      } catch (e) {
+        err.innerText = "❌ Ralat sambungan! Sila semak sambungan internet anda.";
+        err.classList.remove("hidden");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "🔓 Aktifkan Lesen Sekarang";
+    }
+
     let currentOrientation = 'landscape';
 
     function setOrientation(type) {
@@ -364,36 +426,17 @@
       }
     }
 
-    /* Pelarasan Kedudukan & Saiz Teks Dynamic */
-    function adjustY(elementId, value) {
-      document.getElementById(elementId).style.top = `${value}%`;
-    }
-
-    function adjustX(elementId, value) {
-      document.getElementById(elementId).style.left = `${value}%`;
-      document.getElementById(elementId).style.right = `${value}%`;
-    }
-
-    function adjustXCenter(elementId, value) {
-      document.getElementById(elementId).style.transform = `translateX(${value}px)`;
-    }
-
-    function adjustFontSize(elementId, pxSize) {
-      document.getElementById(elementId).style.fontSize = `${pxSize}px`;
-    }
-
-    function adjustFooterFontSize(pxSize) {
-      document.getElementById('textDate').style.fontSize = `${pxSize}px`;
-      document.getElementById('textSignatory').style.fontSize = `${parseInt(pxSize) + 8}px`;
-    }
+    function adjustY(elementId, value) { document.getElementById(elementId).style.top = `${value}%`; }
+    function adjustX(elementId, value) { document.getElementById(elementId).style.left = `${value}%`; document.getElementById(elementId).style.right = `${value}%`; }
+    function adjustXCenter(elementId, value) { document.getElementById(elementId).style.transform = `translateX(${value}px)`; }
+    function adjustFontSize(elementId, pxSize) { document.getElementById(elementId).style.fontSize = `${pxSize}px`; }
+    function adjustFooterFontSize(pxSize) { document.getElementById('textDate').style.fontSize = `${pxSize}px`; document.getElementById('textSignatory').style.fontSize = `${parseInt(pxSize) + 8}px`; }
 
     function scaleLogo(percent) {
       const container = document.getElementById('logoContainer');
-      const baseW = 144;
-      const baseH = 108;
       const factor = percent / 100;
-      container.style.width = `${baseW * factor}px`;
-      container.style.height = `${baseH * factor}px`;
+      container.style.width = `${144 * factor}px`;
+      container.style.height = `${108 * factor}px`;
     }
 
     function changeFontName(fontClass) {
@@ -403,13 +446,10 @@
       el.style.fontSize = currentFontSize;
     }
 
-    function generateUniqueID() {
-      return `CERT-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-    }
+    function generateUniqueID() { return `CERT-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`; }
     document.getElementById('textCertID').innerText = generateUniqueID();
 
-    const fields = ['Organizer', 'Event', 'Name', 'Role', 'Date', 'Signatory'];
-    fields.forEach(field => {
+    ['Organizer', 'Event', 'Name', 'Role', 'Date', 'Signatory'].forEach(field => {
       document.getElementById(`input${field}`).addEventListener('input', (e) => {
         document.getElementById(`text${field}`).innerText = e.target.value;
       });
@@ -446,11 +486,8 @@
       btn.innerText = "⏳ Memproses...";
 
       let bgStyle = "bg-gradient-to-br from-amber-50/60 via-slate-50 to-amber-100/40 border-[16px] border-amber-700/40";
-      if (theme === 'emerald') {
-        bgStyle = "bg-gradient-to-br from-emerald-50/60 via-slate-50 to-emerald-100/40 border-[16px] border-emerald-800/40";
-      } else if (theme === 'classic') {
-        bgStyle = "bg-gradient-to-br from-red-50/40 via-slate-50 to-amber-50/50 border-[16px] border-red-900/40";
-      }
+      if (theme === 'emerald') { bgStyle = "bg-gradient-to-br from-emerald-50/60 via-slate-50 to-emerald-100/40 border-[16px] border-emerald-800/40"; }
+      else if (theme === 'classic') { bgStyle = "bg-gradient-to-br from-red-50/40 via-slate-50 to-amber-50/50 border-[16px] border-red-900/40"; }
 
       if (apiKey) {
         try {
@@ -472,16 +509,11 @@
             btn.innerText = "✨ Jana Latar Belakang AI";
             return;
           }
-        } catch (e) {
-          console.log("Fallback to Pro Styling Engine");
-        }
+        } catch (e) { console.log("Fallback to Pro Styling Engine"); }
       }
 
       document.getElementById('bgContainer').className = `absolute inset-0 flex items-center justify-center ${bgStyle}`;
-      document.getElementById('bgContainer').innerHTML = `
-        <div class="absolute inset-3 border-2 border-dashed border-amber-600/50 pointer-events-none"></div>
-        <div class="absolute inset-6 border border-amber-500/20 pointer-events-none"></div>
-      `;
+      document.getElementById('bgContainer').innerHTML = `<div class="absolute inset-3 border-2 border-dashed border-amber-600/50 pointer-events-none"></div><div class="absolute inset-6 border border-amber-500/20 pointer-events-none"></div>`;
       btn.disabled = false;
       btn.innerText = "✨ Jana Latar Belakang AI";
     }

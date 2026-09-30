@@ -11,7 +11,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   
-  <!-- Font Google Premium -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Great+Vibes&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -24,20 +23,13 @@
     .cert-landscape { width: 842px; height: 595px; }
     .cert-portrait { width: 595px; height: 842px; }
 
-    .draggable-text {
-      position: absolute;
-      user-select: none;
-    }
-
-    .fixed-logo-box {
-      width: 144px;
-      height: 108px;
-    }
+    .draggable-text { position: absolute; user-select: none; }
+    .fixed-logo-box { width: 144px; height: 108px; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-6 relative">
 
-  <!-- SKRIN KUNCI LESEN (GOOGLE SHEETS OVERLAY) -->
+  <!-- SKRIN KUNCI LESEN -->
   <div id="licenseModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-amber-500/40 p-6 md:p-8 rounded-2xl max-w-md w-full shadow-2xl text-center space-y-4">
       <div class="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto text-3xl">
@@ -76,14 +68,14 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Panel Kawalan (Kiri) -->
+      <!-- Panel Kawalan -->
       <div class="lg:col-span-5 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl space-y-4 max-h-[88vh] overflow-y-auto text-xs">
         
         <div class="bg-slate-900 p-3 rounded-lg border border-amber-500/30">
           <label class="block font-bold text-amber-400 uppercase tracking-wider mb-2">📐 Orientasi Sijil</label>
           <div class="grid grid-cols-2 gap-2">
             <button onclick="setOrientation('landscape')" id="btnLandscape" class="bg-amber-500 text-slate-950 font-bold py-2 rounded text-center transition">
-              🖼️ Mendatar (Landscape)
+              🖼 Mendatar (Landscape)
             </button>
             <button onclick="setOrientation('portrait')" id="btnPortrait" class="bg-slate-700 text-slate-300 font-bold py-2 rounded text-center transition">
               📄 Menegak (Portrait)
@@ -297,7 +289,7 @@
 
       </div>
 
-      <!-- Panel Preview (Kanan) -->
+      <!-- Panel Preview -->
       <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-auto">
         <div class="shadow-2xl border border-slate-700 rounded-lg overflow-hidden bg-white text-slate-900 cert-landscape transition-all duration-300 relative" id="certificate-preview">
           
@@ -353,9 +345,8 @@
   </div>
 
   <script>
-    // URL GOOGLE APPS SCRIPT ANDA TELAH DIMASUKKAN SEPENUHNYA!
-    const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbwey8ucxMJG_aMXkWHgcnt9sfise6ASQPoVIMNvXXBd_inHccvVvI4wQQtJhG-Rq5FB/exec
-;
+    // MASUKKAN URL GOOGLE APPS SCRIPT BAHARU DARI LANGKAH 1 DI SINI!
+    const GOOGLE_SCRIPT_URL = "URL_WEB_APP_GOOGLE_BAHARU_ANDA_DI_SINI";
 
     window.onload = function() {
       if (localStorage.getItem("certigenius_active_v46") === "true") {
@@ -365,7 +356,7 @@
       }
     };
 
-    async function validateLicenseWithGoogle() {
+    function validateLicenseWithGoogle() {
       const input = document.getElementById("inputLicenseKey").value.trim();
       const err = document.getElementById("licenseError");
       const btn = document.getElementById("btnActivate");
@@ -380,9 +371,15 @@
       btn.innerText = "⏳ Menyemak Kunci Lesen...";
       err.classList.add("hidden");
 
-      try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}`);
-        const result = await response.json();
+      const script = document.createElement('script');
+      const callbackName = 'googleLicenseCallback_' + Math.floor(Math.random() * 100000);
+
+      window[callbackName] = function(result) {
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+
+        btn.disabled = false;
+        btn.innerText = "🔒 Aktifkan Lesen Sekarang";
 
         if (result.status === "SUCCESS") {
           localStorage.setItem("certigenius_active_v46", "true");
@@ -396,13 +393,17 @@
           err.innerText = "❌ Kunci lesen tidak sah!";
           err.classList.remove("hidden");
         }
-      } catch (e) {
-        err.innerText = "❌ Ralat sambungan! Sila semak sambungan internet atau tetapan Google Script anda.";
-        err.classList.remove("hidden");
-      }
+      };
 
-      btn.disabled = false;
-      btn.innerText = "🔓 Aktifkan Lesen Sekarang";
+      script.src = `${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}&callback=${callbackName}`;
+      script.onerror = function() {
+        btn.disabled = false;
+        btn.innerText = "🔒 Aktifkan Lesen Sekarang";
+        err.innerText = "❌ Ralat sambungan! Sila semak semula URL Google Script anda.";
+        err.classList.remove("hidden");
+      };
+
+      document.body.appendChild(script);
     }
 
     let currentOrientation = 'landscape';
@@ -580,4 +581,3 @@
   </script>
 </body>
 </html>
-

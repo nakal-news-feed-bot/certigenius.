@@ -3,19 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI - Penjana Sijil Pintar (Bulk Support)</title>
+  <title>CertiGenius AI 3.0 - Orientasi & Kawalan Teks Manual</title>
   
-  <!-- TailWind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- jsPDF & html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <!-- SheetJS untuk baca Excel (.xlsx / .csv) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- JSZip untuk muat turun pukal -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   
-  <!-- Font Google Premium -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Pinyon+Script&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -23,170 +18,216 @@
     .font-cursive { font-family: 'Pinyon Script', cursive; }
     .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    #certificate-preview {
-      width: 842px;
-      height: 595px;
-      position: relative;
+    /* Ukuran Standard Landscape */
+    .cert-landscape { width: 842px; height: 595px; }
+    /* Ukuran Standard Portrait */
+    .cert-portrait { width: 595px; height: 842px; }
+
+    .draggable-text {
+      position: absolute;
+      cursor: move;
+      user-select: none;
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-6">
 
   <div class="max-w-7xl mx-auto">
-    <!-- Header -->
     <header class="mb-6 text-center">
-      <h1 class="text-3xl md:text-4xl font-bold text-amber-400">CertiGenius AI 2.0</h1>
-      <p class="text-slate-400 text-sm mt-1">Penjana Sijil Pintar, Logo, Penganjur & Sokongan Fail Excel (Bulk)</p>
+      <h1 class="text-3xl font-bold text-amber-400">CertiGenius AI 3.0</h1>
+      <p class="text-slate-400 text-xs mt-1">Sokongan Orientasi Menegak/Mendatar & Pelarasan Kedudukan Teks Manual</p>
     </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Panel Borang Input (Kiri) -->
-      <div class="lg:col-span-5 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
-        <h2 class="text-lg font-semibold text-amber-300 border-b border-slate-700 pb-2">Tetapan & Maklumat Sijil</h2>
-
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Gemini API Key</label>
-          <input type="password" id="apiKey" placeholder="Masukkan Gemini API Key" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm focus:border-amber-400 outline-none">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Logo Penganjur / Sekolah</label>
-          <input type="file" id="inputLogo" accept="image/*" onchange="previewLogo(event)" class="w-full text-xs text-slate-400 bg-slate-900 border border-slate-700 rounded p-1.5">
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Nama Penganjur</label>
-            <input type="text" id="inputOrganizer" value="KEMENTERIAN PENDIDIKAN MALAYSIA" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tema AI</label>
-            <select id="themeSelect" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
-              <option value="gold">Mewah (Emas & Biru)</option>
-              <option value="emerald">Moden (Zamrud)</option>
-              <option value="classic">Klasik (Diploma)</option>
-            </select>
+      <!-- Panel Kawalan (Kiri) -->
+      <div class="lg:col-span-5 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl space-y-4 max-h-[88vh] overflow-y-auto text-xs">
+        
+        <!-- Pilihan Orientasi -->
+        <div class="bg-slate-900 p-3 rounded-lg border border-amber-500/30">
+          <label class="block font-bold text-amber-400 uppercase tracking-wider mb-2">📐 Orientasi Sijil</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setOrientation('landscape')" id="btnLandscape" class="bg-amber-500 text-slate-950 font-bold py-1.5 rounded text-center">
+              🖼️ Mendatar (Landscape)
+            </button>
+            <button onclick="setOrientation('portrait')" id="btnPortrait" class="bg-slate-700 text-slate-300 font-bold py-1.5 rounded text-center">
+              📄 Menegak (Portrait)
+            </button>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tajuk Program / Acara</label>
-          <input type="text" id="inputEvent" value="BENGKEL KEPIMPINAN GURU 2026" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
+          <label class="block font-semibold uppercase text-slate-300 mb-1">Gemini API Key</label>
+          <input type="password" id="apiKey" placeholder="Masukkan Gemini API Key" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-xs">
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Nama Penerima (Individu)</label>
-          <input type="text" id="inputName" value="CIKGU AHMAD DANIEL B. ROSLI" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
-        </div>
+        <!-- Tetapan Teks -->
+        <div class="space-y-3">
+          <h3 class="font-bold text-amber-300 border-b border-slate-700 pb-1">Kandungan Teks</h3>
 
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Pencapaian / Peranan</label>
-          <input type="text" id="inputRole" value="Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Tarikh</label>
-            <input type="text" id="inputDate" value="30 September 2026" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
+            <label class="block text-slate-400 mb-0.5">Logo Penganjur</label>
+            <input type="file" id="inputLogo" accept="image/*" onchange="previewLogo(event)" class="w-full bg-slate-900 border border-slate-700 rounded p-1">
           </div>
+
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Penandatangan</label>
-            <input type="text" id="inputSignatory" value="Pengarah Pendidikan" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm outline-none">
+            <label class="block text-slate-400 mb-0.5">Nama Penganjur</label>
+            <input type="text" id="inputOrganizer" value="KEMENTERIAN PENDIDIKAN MALAYSIA" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5">
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-0.5">Tajuk Program</label>
+            <input type="text" id="inputEvent" value="BENGKEL KEPIMPINAN GURU 2026" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5">
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-0.5">Nama Penerima</label>
+            <input type="text" id="inputName" value="CIKGU AHMAD DANIEL B. ROSLI" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5">
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-0.5">Peranan / Pencapaian</label>
+            <input type="text" id="inputRole" value="Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5">
           </div>
         </div>
 
-        <!-- Bahagian Muat Naik Excel / Bulk -->
-        <div class="border-t border-slate-700 pt-3">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-amber-400 mb-1">📂 Muat Naik Senarai Nama Pukal (Excel / CSV)</label>
-          <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="w-full text-xs text-slate-400 bg-slate-900 border border-slate-700 rounded p-1.5">
-          <p class="text-[10px] text-slate-400 mt-1">* Pastikan Lajur B beralamat nama peserta di fail Excel.</p>
+        <!-- Pelarasan Kedudukan Manual (Position Adjustment) -->
+        <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-2">
+          <h3 class="font-bold text-amber-400 mb-1">🎯 Pelarasan Teks Manual (Atas / Bawah)</h3>
+          
+          <div>
+            <label class="block text-[10px] text-slate-400">Kedudukan Tajuk Program (Y)</label>
+            <input type="range" id="posYEvent" min="10" max="80" value="22" oninput="adjustPosition('elEvent', this.value)" class="w-full h-1 bg-slate-700 rounded appearance-none">
+          </div>
+
+          <div>
+            <label class="block text-[10px] text-slate-400">Kedudukan Nama Penerima (Y)</label>
+            <input type="range" id="posYName" min="30" max="80" value="48" oninput="adjustPosition('elName', this.value)" class="w-full h-1 bg-slate-700 rounded appearance-none">
+          </div>
+
+          <div>
+            <label class="block text-[10px] text-slate-400">Kedudukan Peranan (Y)</label>
+            <input type="range" id="posYRole" min="40" max="90" value="62" oninput="adjustPosition('elRole', this.value)" class="w-full h-1 bg-slate-700 rounded appearance-none">
+          </div>
         </div>
 
+        <!-- Bulk Import -->
+        <div class="border-t border-slate-700 pt-2">
+          <label class="block text-amber-400 font-bold mb-1">📂 Muat Naik Excel (Bulk)</label>
+          <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="w-full bg-slate-900 border border-slate-700 rounded p-1 text-[10px]">
+        </div>
+
+        <!-- Action Buttons -->
         <div class="pt-2 space-y-2">
-          <button onclick="generateAIBackground()" id="btnGenerateAI" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-2.5 rounded transition shadow-lg text-sm">
+          <button onclick="generateAIBackground()" id="btnGenerateAI" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded shadow text-xs">
             ✨ Jana Latar Belakang AI
           </button>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="downloadSinglePDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded text-xs">
-              📄 Muat Turun (1 Sijil)
+            <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded text-xs">
+              📄 Muat Turun (PDF)
             </button>
-            <button onclick="downloadBulkPDFs()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded text-xs">
-              📦 Jana Pukal (ZIP)
+            <button onclick="downloadBulkPDFs()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-xs">
+              📦 Jana Bulk (ZIP)
             </button>
           </div>
         </div>
+
       </div>
 
-      <!-- Panel Prapapar Sijil (Kanan) -->
-      <div class="lg:col-span-7 flex flex-col items-center justify-center overflow-x-auto">
-        <div class="shadow-2xl border border-slate-700 rounded-lg overflow-hidden bg-white text-slate-900" id="certificate-preview">
+      <!-- Panel Preview (Kanan) -->
+      <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-auto">
+        <div class="shadow-2xl border border-slate-700 rounded-lg overflow-hidden bg-white text-slate-900 cert-landscape transition-all duration-300 relative" id="certificate-preview">
           
-          <!-- Latar Belakang AI -->
-          <div id="bgContainer" class="absolute inset-0 bg-slate-50 flex items-center justify-center border-[20px] border-amber-800/10">
-            <div class="absolute inset-4 border border-amber-600/30 pointer-events-none"></div>
+          <!-- Latar Belakang -->
+          <div id="bgContainer" class="absolute inset-0 bg-slate-50 border-[16px] border-amber-800/10 flex items-center justify-center">
+            <div class="absolute inset-3 border border-amber-600/30 pointer-events-none"></div>
           </div>
 
-          <!-- Overlay Teks (Kemas & Jarak Tepi Seimbang) -->
-          <div class="absolute inset-0 px-20 py-10 flex flex-col justify-between text-center z-10">
-            
-            <!-- Header & Logo -->
-            <div class="flex flex-col items-center">
-              <img id="logoPreview" src="" class="h-12 object-contain mb-2 hidden">
-              <p id="textOrganizer" class="font-cinzel text-[10px] tracking-[0.25em] text-slate-500 font-bold uppercase">KEMENTERIAN PENDIDIKAN MALAYSIA</p>
-              <p class="font-cinzel text-xs tracking-[0.3em] text-amber-700 font-bold uppercase mt-1">SIJIL PENGHARGAAN</p>
-              <h2 id="textEvent" class="font-cinzel text-lg font-bold text-slate-800 tracking-wide mt-1">BENGKEL KEPIMPINAN GURU 2026</h2>
+          <!-- Elemen Teks Bebas Pelarasan -->
+          <div id="elLogo" class="draggable-text left-0 right-0 top-[6%] flex justify-center">
+            <img id="logoPreview" src="" class="h-10 object-contain hidden">
+          </div>
+
+          <div id="elOrganizer" class="draggable-text left-0 right-0 top-[14%] text-center px-8">
+            <p id="textOrganizer" class="font-cinzel text-[10px] tracking-[0.25em] text-slate-500 font-bold uppercase">KEMENTERIAN PENDIDIKAN MALAYSIA</p>
+            <p class="font-cinzel text-xs tracking-[0.3em] text-amber-700 font-bold uppercase mt-0.5">SIJIL PENGHARGAAN</p>
+          </div>
+
+          <div id="elEvent" class="draggable-text left-0 right-0 top-[22%] text-center px-8">
+            <h2 id="textEvent" class="font-cinzel text-lg font-bold text-slate-800 tracking-wide">BENGKEL KEPIMPINAN GURU 2026</h2>
+          </div>
+
+          <div id="elName" class="draggable-text left-0 right-0 top-[48%] text-center px-8">
+            <p class="text-xs text-slate-500 italic">Dengan ini disahkan bahawa</p>
+            <h3 id="textName" class="font-cursive text-4xl text-amber-900 my-1">Cikgu Ahmad Daniel B. Rosli</h3>
+          </div>
+
+          <div id="elRole" class="draggable-text left-0 right-0 top-[62%] text-center px-12">
+            <p id="textRole" class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
+          </div>
+
+          <!-- Footer Fixed -->
+          <div class="absolute bottom-6 left-12 right-12 flex justify-between items-end border-t border-slate-300/80 pt-3">
+            <div>
+              <p class="text-[9px] text-slate-400 uppercase">Tarikh</p>
+              <p id="textDate" class="text-xs font-semibold text-slate-700">30 September 2026</p>
             </div>
 
-            <!-- Penerima -->
-            <div class="my-auto py-2">
-              <p class="text-xs text-slate-500 italic">Dengan ini disahkan bahawa</p>
-              <h3 id="textName" class="font-cursive text-4xl text-amber-900 my-2 px-4">Cikgu Ahmad Daniel B. Rosli</h3>
-              <p id="textRole" class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
+            <div class="text-center">
+              <p class="text-[8px] text-slate-400 uppercase">No. ID Ketulenan</p>
+              <p id="textCertID" class="font-mono text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">CERT-2026-X89K</p>
             </div>
 
-            <!-- Footer & ID Unik -->
-            <div class="flex justify-between items-end border-t border-slate-300/80 pt-3 text-left px-2">
-              <div>
-                <p class="text-[9px] text-slate-400 uppercase tracking-wider">Tarikh</p>
-                <p id="textDate" class="text-xs font-semibold text-slate-700">30 September 2026</p>
-              </div>
-
-              <div class="text-center">
-                <p class="text-[8px] text-slate-400 uppercase tracking-widest">No. ID Ketulenan Sijil</p>
-                <p id="textCertID" class="font-mono text-[11px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mt-0.5">CERT-2026-X89K</p>
-              </div>
-
-              <div class="text-right">
-                <p class="text-[9px] text-slate-400 uppercase tracking-wider">Tandatangan</p>
-                <p id="textSignatory" class="font-cursive text-xl text-slate-800">Pengarah Pendidikan</p>
-              </div>
+            <div class="text-right">
+              <p class="text-[9px] text-slate-400 uppercase">Tandatangan</p>
+              <p class="font-cursive text-xl text-slate-800">Pengarah Pendidikan</p>
             </div>
-
           </div>
 
         </div>
-        <p class="text-xs text-slate-400 mt-3">* Margin tepi telah diselaraskan untuk cetakan kemas saiz A4 Landscape.</p>
       </div>
 
     </div>
   </div>
 
   <script>
+    let currentOrientation = 'landscape';
+
+    function setOrientation(type) {
+      currentOrientation = type;
+      const preview = document.getElementById('certificate-preview');
+      const btnL = document.getElementById('btnLandscape');
+      const btnP = document.getElementById('btnPortrait');
+
+      if (type === 'portrait') {
+        preview.classList.remove('cert-landscape');
+        preview.classList.add('cert-portrait');
+        btnP.className = "bg-amber-500 text-slate-950 font-bold py-1.5 rounded text-center";
+        btnL.className = "bg-slate-700 text-slate-300 font-bold py-1.5 rounded text-center";
+      } else {
+        preview.classList.remove('cert-portrait');
+        preview.classList.add('cert-landscape');
+        btnL.className = "bg-amber-500 text-slate-950 font-bold py-1.5 rounded text-center";
+        btnP.className = "bg-slate-700 text-slate-300 font-bold py-1.5 rounded text-center";
+      }
+    }
+
+    function adjustPosition(elementId, value) {
+      document.getElementById(elementId).style.top = `${value}%`;
+    }
+
     function generateUniqueID() {
       return `CERT-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     }
     document.getElementById('textCertID').innerText = generateUniqueID();
 
-    // Kemaskini Teks Masa Nyata
-    const fields = ['Organizer', 'Event', 'Name', 'Role', 'Date', 'Signatory'];
+    const fields = ['Organizer', 'Event', 'Name', 'Role'];
     fields.forEach(field => {
       document.getElementById(`input${field}`).addEventListener('input', (e) => {
         document.getElementById(`text${field}`).innerText = e.target.value;
       });
     });
 
-    // Papar Logo
     function previewLogo(event) {
       const reader = new FileReader();
       reader.onload = function() {
@@ -197,10 +238,8 @@
       reader.readAsDataURL(event.target.files[0]);
     }
 
-    // AI Background
     async function generateAIBackground() {
       const apiKey = document.getElementById('apiKey').value;
-      const theme = document.getElementById('themeSelect').value;
       const btn = document.getElementById('btnGenerateAI');
 
       if (!apiKey) {
@@ -211,17 +250,16 @@
       btn.disabled = true;
       btn.innerText = "⏳ Memproses Reka Bentuk AI...";
 
-      let themePrompt = "Professional elegant certificate border, golden filigree, navy blue frame, clean off-white empty center.";
-      if (theme === 'emerald') themePrompt = "Modern minimalist certificate background, emerald green and rose gold lines, clean cream empty center.";
-      if (theme === 'classic') themePrompt = "Traditional university diploma background, burgundy guilloche border, clean parchment center.";
+      const aspect = currentOrientation === 'portrait' ? "3:4" : "4:3";
+      const promptText = `Professional elegant certificate border, golden filigree, navy blue frame, clean empty center, ${currentOrientation} orientation.`;
 
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            instances: [{ prompt: `${themePrompt} high resolution, A4 landscape aspect ratio, no text in middle.` }],
-            parameters: { sampleCount: 1, aspectRatio: "4:3" }
+            instances: [{ prompt: promptText }],
+            parameters: { sampleCount: 1, aspectRatio: aspect }
           })
         });
 
@@ -230,7 +268,7 @@
           const imageBase64 = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
           document.getElementById('bgContainer').innerHTML = `<img src="${imageBase64}" class="w-full h-full object-cover">`;
         } else {
-          alert("Gagal menjana imej. Sila pastikan API Key betul.");
+          alert("Gagal menjana imej. Pastikan API Key betul.");
         }
       } catch (err) {
         alert("Ralat menyambung ke Gemini API.");
@@ -240,23 +278,21 @@
       }
     }
 
-    // Muat Turun 1 Sijil
-    async function downloadSinglePDF() {
+    async function downloadPDF() {
       const { jsPDF } = window.jspdf;
       const element = document.getElementById('certificate-preview');
       const canvas = await html2canvas(element, { scale: 2 });
       const imgData = canvas.toDataURL('image/png');
 
-      const pdf = new jsPDF('landscape', 'mm', 'a4');
+      const pdf = new jsPDF(currentOrientation, 'mm', 'a4');
       pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
       pdf.save(`Sijil_${document.getElementById('inputName').value.replace(/\s+/g, '_')}.pdf`);
     }
 
-    // Muat Turun Pukal (Excel / CSV ke ZIP)
     async function downloadBulkPDFs() {
       const fileInput = document.getElementById('excelFile');
       if (!fileInput.files.length) {
-        alert("Sila muat naik fail Excel / CSV senarai nama terlebih dahulu!");
+        alert("Sila muat naik fail Excel senarai nama!");
         return;
       }
 
@@ -269,21 +305,13 @@
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        if (rows.length < 1) {
-          alert("Fail Excel kosong!");
-          return;
-        }
-
         const zip = new JSZip();
         const { jsPDF } = window.jspdf;
 
-        alert(`Memproses ${rows.length} sijil... Sila tunggu sebentar.`);
-
         for (let i = 0; i < rows.length; i++) {
-          const name = rows[i][0] || rows[i][1]; // Ambil nama dari Lajur A atau B
+          const name = rows[i][0] || rows[i][1];
           if (!name) continue;
 
-          // Tukar nama & ID secara dinamik
           document.getElementById('textName').innerText = name;
           document.getElementById('textCertID').innerText = generateUniqueID();
 
@@ -291,14 +319,12 @@
           const canvas = await html2canvas(element, { scale: 2 });
           const imgData = canvas.toDataURL('image/png');
 
-          const pdf = new jsPDF('landscape', 'mm', 'a4');
+          const pdf = new jsPDF(currentOrientation, 'mm', 'a4');
           pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
           
-          const pdfBlob = pdf.output('blob');
-          zip.file(`Sijil_${name.replace(/\s+/g, '_')}.pdf`, pdfBlob);
+          zip.file(`Sijil_${name.replace(/\s+/g, '_')}.pdf`, pdf.output('blob'));
         }
 
-        // Muat turun fail ZIP
         zip.generateAsync({ type: "blob" }).then(function(content) {
           const a = document.createElement("a");
           a.href = URL.createObjectURL(content);

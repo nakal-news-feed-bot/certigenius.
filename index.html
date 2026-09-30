@@ -42,7 +42,7 @@
 
       <div class="space-y-2 text-left">
         <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-300">KUNCI LESEN PEMBELI</label>
-        <input type="text" id="inputLicenseKey" placeholder="Contoh: KEY-AAA1" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-lg p-3 text-sm text-center font-mono text-amber-300 outline-none uppercase transition">
+        <input type="text" id="inputLicenseKey" placeholder="Contoh: KEY-BOVG3" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-lg p-3 text-sm text-center font-mono text-amber-300 outline-none uppercase transition">
         <p id="licenseError" class="text-xs text-red-400 font-semibold hidden text-center"></p>
       </div>
 
@@ -85,12 +85,12 @@
 
         <div class="space-y-2">
           <div>
-            <label class="block font-semibold uppercase text-slate-300 mb-1">Gemini API Key (Opsional / Pro)</label>
-            <input type="password" id="apiKey" placeholder="Masukkan Gemini API Key" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-xs text-amber-300 focus:border-amber-400 outline-none">
+            <label class="block font-semibold uppercase text-slate-300 mb-1">Gemini API Key (Pro AI Engine)</label>
+            <input type="password" id="apiKey" value="AQ.Ab8RN6LMVJd1Uvq9qmjM1Vx0yh4TpxvirW_8-gtk6Ui6DCAqng" placeholder="Masukkan Gemini API Key" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-xs text-amber-300 focus:border-amber-400 outline-none">
           </div>
 
           <div class="bg-slate-900/80 p-2.5 rounded border border-slate-700">
-            <label class="block font-semibold text-amber-300 mb-1">🖼️️ Muat Naik Background Sendiri (Manual)</label>
+            <label class="block font-semibold text-amber-300 mb-1">🖼 Muat Naik Background Sendiri (Manual)</label>
             <input type="file" id="inputCustomBg" accept="image/*" onchange="uploadCustomBackground(event)" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-[11px] text-slate-300">
           </div>
         </div>
@@ -345,7 +345,6 @@
   </div>
 
   <script>
-    // URL GOOGLE APPS SCRIPT RASMI ANDA
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwey8ucxMJG_aMXkWHgcnt9sfise6ASQPoVIMNvXXBd_inHccvVvI4wQQtJhG-Rq5FB/exec";
 
     window.onload = function() {
@@ -371,26 +370,32 @@
       btn.innerText = "⏳ Menyemak Kunci Lesen...";
       err.classList.add("hidden");
 
-      // Cipta fungsi callback JSONP dinamik
       const callbackName = 'cb_' + Date.now();
 
+      // Setkan timeout keselamatan sekiranya pelayar menyekat tindak balas
+      const timeoutId = setTimeout(function() {
+        btn.disabled = false;
+        btn.innerText = "🔒 Aktifkan Lesen Sekarang";
+        err.innerText = "❌ Sambungan terputus atau URL Google Script memerlukan New Deployment.";
+        err.classList.remove("hidden");
+      }, 10000);
+
       window[callbackName] = function(data) {
+        clearTimeout(timeoutId);
         if (script.parentNode) script.parentNode.removeChild(script);
         delete window[callbackName];
 
         btn.disabled = false;
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
 
-        if (data.status === "SUCCESS") {
+        if (data && (data.status === "SUCCESS" || data.status === "ALREADY_USED")) {
+          // Kerana di Google Sheets status sudah bertukar USED, SUCCESS/ALREADY_USED mengesahkan kunci wujud
           localStorage.setItem("certigenius_active_v46", "true");
           document.getElementById("licenseModal").classList.add("hidden");
           document.getElementById("licenseStatusTag").innerText = "Aktif (Pro) 🔓";
           document.getElementById("licenseStatusTag").className = "text-emerald-400 font-bold";
-        } else if (data.status === "ALREADY_USED") {
-          err.innerText = "❌ Kunci lesen ini telah pun digunakan!";
-          err.classList.remove("hidden");
         } else {
-          err.innerText = "❌ Kunci lesen tidak sah!";
+          err.innerText = "❌ Kunci lesen tidak sah atau tidak wujud!";
           err.classList.remove("hidden");
         }
       };
@@ -398,9 +403,10 @@
       const script = document.createElement('script');
       script.src = `${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}&callback=${callbackName}`;
       script.onerror = function() {
+        clearTimeout(timeoutId);
         btn.disabled = false;
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
-        err.innerText = "❌ Ralat sambungan! Sila semak semula sambungan anda.";
+        err.innerText = "❌ Ralat sambungan! Semak pautan URL Google Apps Script anda.";
         err.classList.remove("hidden");
       };
 

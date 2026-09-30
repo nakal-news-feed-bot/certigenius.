@@ -29,7 +29,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-6 relative">
 
-  <!-- SKRIN KUNCI LESEN -->
+  <!-- SKRIN KUNCI LESEN (OVERLAY) -->
   <div id="licenseModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-amber-500/40 p-6 md:p-8 rounded-2xl max-w-md w-full shadow-2xl text-center space-y-4">
       <div class="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto text-3xl">
@@ -90,7 +90,7 @@
           </div>
 
           <div class="bg-slate-900/80 p-2.5 rounded border border-slate-700">
-            <label class="block font-semibold text-amber-300 mb-1">🖼️ Muat Naik Background Sendiri (Manual)</label>
+            <label class="block font-semibold text-amber-300 mb-1">🖼️️ Muat Naik Background Sendiri (Manual)</label>
             <input type="file" id="inputCustomBg" accept="image/*" onchange="uploadCustomBackground(event)" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-[11px] text-slate-300">
           </div>
         </div>
@@ -345,7 +345,7 @@
   </div>
 
   <script>
-    // URL GOOGLE APPS SCRIPT BAHARU
+    // URL GOOGLE APPS SCRIPT RASMI ANDA
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwey8ucxMJG_aMXkWHgcnt9sfise6ASQPoVIMNvXXBd_inHccvVvI4wQQtJhG-Rq5FB/exec";
 
     window.onload = function() {
@@ -371,22 +371,22 @@
       btn.innerText = "⏳ Menyemak Kunci Lesen...";
       err.classList.add("hidden");
 
-      const script = document.createElement('script');
-      const callbackName = 'googleLicenseCallback_' + Math.floor(Math.random() * 100000);
+      // Cipta fungsi callback JSONP dinamik
+      const callbackName = 'cb_' + Date.now();
 
-      window[callbackName] = function(result) {
-        delete window[callbackName];
+      window[callbackName] = function(data) {
         if (script.parentNode) script.parentNode.removeChild(script);
+        delete window[callbackName];
 
         btn.disabled = false;
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
 
-        if (result.status === "SUCCESS") {
+        if (data.status === "SUCCESS") {
           localStorage.setItem("certigenius_active_v46", "true");
           document.getElementById("licenseModal").classList.add("hidden");
           document.getElementById("licenseStatusTag").innerText = "Aktif (Pro) 🔓";
           document.getElementById("licenseStatusTag").className = "text-emerald-400 font-bold";
-        } else if (result.status === "ALREADY_USED") {
+        } else if (data.status === "ALREADY_USED") {
           err.innerText = "❌ Kunci lesen ini telah pun digunakan!";
           err.classList.remove("hidden");
         } else {
@@ -395,11 +395,12 @@
         }
       };
 
+      const script = document.createElement('script');
       script.src = `${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}&callback=${callbackName}`;
       script.onerror = function() {
         btn.disabled = false;
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
-        err.innerText = "❌ Ralat sambungan! Sila semak semula URL Google Script anda.";
+        err.innerText = "❌ Ralat sambungan! Sila semak semula sambungan anda.";
         err.classList.remove("hidden");
       };
 

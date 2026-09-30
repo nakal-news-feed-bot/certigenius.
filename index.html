@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI Pro 4.3 - Fixed Logo Edition</title>
+  <title>CertiGenius AI Pro 4.4 - Ultimate Commercial Edition</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -40,8 +40,8 @@
 
   <div class="max-w-7xl mx-auto">
     <header class="mb-6 text-center">
-      <h1 class="text-3xl font-bold text-amber-400">CertiGenius AI Pro 4.3</h1>
-      <p class="text-slate-400 text-xs mt-1">Sistem Penjana Sijil Precision: Fixed Logo 1.5x2 Inci, Slider X/Y & Font Custom</p>
+      <h1 class="text-3xl font-bold text-amber-400">CertiGenius AI Pro 4.4</h1>
+      <p class="text-slate-400 text-xs mt-1">Sistem Penjana Sijil Precision: Kawalan Penuh X/Y, Fixed Logo 1.5x2 & Font Size Slider</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -137,9 +137,9 @@
           </div>
         </div>
 
-        <!-- Pelarasan Kedudukan Manual Individu (Y & X Slider) -->
+        <!-- Pelarasan Kedudukan & Saiz Teks (Y, X & Size Slider) -->
         <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-3">
-          <h3 class="font-bold text-amber-400 mb-1">🎯 Kawalan Slider Kedudukan Mikro</h3>
+          <h3 class="font-bold text-amber-400 mb-1">🎯 Kawalan Slider Kedudukan & Saiz Teks</h3>
 
           <!-- Logo Slider -->
           <div class="border-b border-slate-800 pb-2">
@@ -151,7 +151,7 @@
               </div>
               <div>
                 <label class="block text-[9px] text-slate-400">Kedudukan (X)</label>
-                <input type="range" min="0" max="80" value="0" oninput="adjustXCenter('elLogo', this.value)" class="w-full h-1 bg-slate-700 rounded">
+                <input type="range" min="-100" max="100" value="0" oninput="adjustXCenter('elLogo', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
                 <label class="block text-[9px] text-slate-400">Skala Saiz</label>
@@ -163,14 +163,18 @@
           <!-- Penganjur Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">2. Nama Penganjur</span>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-slate-400">Atas/Bawah (Y)</label>
+                <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="10" max="40" value="23" oninput="adjustY('elOrganizer', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
-                <label class="block text-[9px] text-slate-400">Margin Tepi (X)</label>
+                <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="2" max="35" value="8" oninput="adjustX('elOrganizer', this.value)" class="w-full h-1 bg-slate-700 rounded">
+              </div>
+              <div>
+                <label class="block text-[9px] text-amber-300 font-semibold">Saiz Teks</label>
+                <input type="range" min="8" max="24" value="10" oninput="adjustFontSize('textOrganizer', this.value)" class="w-full h-1 bg-amber-500/50 rounded">
               </div>
             </div>
           </div>
@@ -178,14 +182,18 @@
           <!-- Tajuk Program Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">3. Tajuk Program</span>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-slate-400">Atas/Bawah (Y)</label>
+                <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="15" max="50" value="31" oninput="adjustY('elEvent', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
-                <label class="block text-[9px] text-slate-400">Margin Tepi (X)</label>
+                <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="2" max="35" value="8" oninput="adjustX('elEvent', this.value)" class="w-full h-1 bg-slate-700 rounded">
+              </div>
+              <div>
+                <label class="block text-[9px] text-amber-300 font-semibold">Saiz Teks</label>
+                <input type="range" min="12" max="36" value="18" oninput="adjustFontSize('textEvent', this.value)" class="w-full h-1 bg-amber-500/50 rounded">
               </div>
             </div>
           </div>
@@ -193,14 +201,18 @@
           <!-- Nama Penerima Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">4. Nama Penerima</span>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-slate-400">Atas/Bawah (Y)</label>
+                <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="30" max="75" value="50" oninput="adjustY('elName', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
-                <label class="block text-[9px] text-slate-400">Margin Tepi (X)</label>
+                <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="2" max="35" value="8" oninput="adjustX('elName', this.value)" class="w-full h-1 bg-slate-700 rounded">
+              </div>
+              <div>
+                <label class="block text-[9px] text-amber-300 font-semibold">Saiz Teks</label>
+                <input type="range" min="20" max="64" value="36" oninput="adjustFontSize('textName', this.value)" class="w-full h-1 bg-amber-500/50 rounded">
               </div>
             </div>
           </div>
@@ -208,14 +220,18 @@
           <!-- Peranan Slider -->
           <div class="border-b border-slate-800 pb-2">
             <span class="block font-bold text-slate-300 mb-1">5. Peranan / Pencapaian</span>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-slate-400">Atas/Bawah (Y)</label>
+                <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="40" max="85" value="65" oninput="adjustY('elRole', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
-                <label class="block text-[9px] text-slate-400">Margin Tepi (X)</label>
+                <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="2" max="35" value="8" oninput="adjustX('elRole', this.value)" class="w-full h-1 bg-slate-700 rounded">
+              </div>
+              <div>
+                <label class="block text-[9px] text-amber-300 font-semibold">Saiz Teks</label>
+                <input type="range" min="8" max="22" value="12" oninput="adjustFontSize('textRole', this.value)" class="w-full h-1 bg-amber-500/50 rounded">
               </div>
             </div>
           </div>
@@ -223,14 +239,18 @@
           <!-- Footer Slider -->
           <div>
             <span class="block font-bold text-slate-300 mb-1">6. Footer (Tarikh/ID/Tandatangan)</span>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-slate-400">Atas/Bawah (Y)</label>
+                <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="70" max="95" value="88" oninput="adjustY('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
               </div>
               <div>
-                <label class="block text-[9px] text-slate-400">Margin Tepi (X)</label>
+                <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="4" max="35" value="12" oninput="adjustX('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
+              </div>
+              <div>
+                <label class="block text-[9px] text-amber-300 font-semibold">Saiz Teks</label>
+                <input type="range" min="8" max="18" value="12" oninput="adjustFooterFontSize(this.value)" class="w-full h-1 bg-amber-500/50 rounded">
               </div>
             </div>
           </div>
@@ -284,18 +304,18 @@
 
           <!-- Elemen Tajuk Program -->
           <div id="elEvent" class="draggable-text left-[8%] right-[8%] top-[31%] text-center z-10">
-            <h2 id="textEvent" class="font-cinzel text-lg font-bold text-slate-800 tracking-wide">BENGKEL KEPIMPINAN GURU 2026</h2>
+            <h2 id="textEvent" class="font-cinzel text-[18px] font-bold text-slate-800 tracking-wide">BENGKEL KEPIMPINAN GURU 2026</h2>
           </div>
 
           <!-- Elemen Nama Penerima -->
           <div id="elName" class="draggable-text left-[8%] right-[8%] top-[50%] text-center z-10">
             <p class="text-xs text-slate-500 italic">Dengan ini disahkan bahawa</p>
-            <h3 id="textName" class="font-cursive text-4xl text-amber-900 my-1">Cikgu Ahmad Daniel B. Rosli</h3>
+            <h3 id="textName" class="font-cursive text-[36px] text-amber-900 my-1">Cikgu Ahmad Daniel B. Rosli</h3>
           </div>
 
           <!-- Elemen Peranan -->
           <div id="elRole" class="draggable-text left-[8%] right-[8%] top-[65%] text-center z-10">
-            <p id="textRole" class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
+            <p id="textRole" class="text-[12px] text-slate-600 max-w-md mx-auto leading-relaxed">Atas penyertaan dan sumbangan cemerlang sebagai Peserta Utama</p>
           </div>
 
           <!-- Footer (Tarikh, No. ID Ketulenan, Tandatangan) -->
@@ -344,6 +364,7 @@
       }
     }
 
+    /* Pelarasan Kedudukan & Saiz Teks Dynamic */
     function adjustY(elementId, value) {
       document.getElementById(elementId).style.top = `${value}%`;
     }
@@ -357,6 +378,15 @@
       document.getElementById(elementId).style.transform = `translateX(${value}px)`;
     }
 
+    function adjustFontSize(elementId, pxSize) {
+      document.getElementById(elementId).style.fontSize = `${pxSize}px`;
+    }
+
+    function adjustFooterFontSize(pxSize) {
+      document.getElementById('textDate').style.fontSize = `${pxSize}px`;
+      document.getElementById('textSignatory').style.fontSize = `${parseInt(pxSize) + 8}px`;
+    }
+
     function scaleLogo(percent) {
       const container = document.getElementById('logoContainer');
       const baseW = 144;
@@ -368,7 +398,9 @@
 
     function changeFontName(fontClass) {
       const el = document.getElementById('textName');
-      el.className = `${fontClass} text-4xl text-amber-900 my-1`;
+      const currentFontSize = el.style.fontSize || '36px';
+      el.className = `${fontClass} text-amber-900 my-1`;
+      el.style.fontSize = currentFontSize;
     }
 
     function generateUniqueID() {
@@ -504,7 +536,6 @@
         }
 
         zip.generateAsync({ type: "blob" }).then(function(content) {
-          const a = document.getElementById('certificate-preview');
           const link = document.createElement("a");
           link.href = URL.createObjectURL(content);
           link.download = "Senarai_Sijil_Pukal.zip";

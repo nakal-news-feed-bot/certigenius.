@@ -49,13 +49,13 @@
       </p>
 
       <div class="space-y-2 text-left">
-        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-300">Kunci Lesen Pembeli</label>
+        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-300">KUNCI LESEN PEMBELI</label>
         <input type="text" id="inputLicenseKey" placeholder="Contoh: KEY-AAA1" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-lg p-3 text-sm text-center font-mono text-amber-300 outline-none uppercase transition">
         <p id="licenseError" class="text-xs text-red-400 font-semibold hidden text-center"></p>
       </div>
 
       <button id="btnActivate" onclick="validateLicenseWithGoogle()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-3 rounded-lg shadow-lg text-sm transition transform active:scale-95">
-        🔓 Aktifkan Lesen Sekarang
+        🔒 Aktifkan Lesen Sekarang
       </button>
 
       <div class="border-t border-slate-800 pt-3 text-[11px] text-slate-500">
@@ -262,8 +262,7 @@
               <div>
                 <label class="block text-[9px] text-slate-400">Kedudukan (Y)</label>
                 <input type="range" min="70" max="95" value="88" oninput="adjustY('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
-              </divhttps://script.google.com/macros/s/AKfycbxzhrdN-hXn8X83pbzI3oXPjDPbs_S9oP35MfT68OI750eqkJ6Fa2o6QHIaARBHgdgV/exec
->
+              </div>
               <div>
                 <label class="block text-[9px] text-slate-400">Margin (X)</label>
                 <input type="range" min="4" max="35" value="12" oninput="adjustX('elFooter', this.value)" class="w-full h-1 bg-slate-700 rounded">
@@ -354,8 +353,8 @@
   </div>
 
   <script>
-    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI!
-    const GOOGLE_SCRIPT_URL = "URL_WEB_APP_GOOGLE_ANDA_DI_SINI";
+    // URL GOOGLE APPS SCRIPT ANDA TELAH DIMASUKKAN SEPENUHNYA!
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzhrdN-hXn8X83pbzI3oXPjDPbs_S9oP35MfT68OI750eqkJ6Fa2o6QHIaARBHgdgV/exec";
 
     window.onload = function() {
       if (localStorage.getItem("certigenius_active_v46") === "true") {
@@ -397,7 +396,7 @@
           err.classList.remove("hidden");
         }
       } catch (e) {
-        err.innerText = "❌ Ralat sambungan! Sila semak sambungan internet anda.";
+        err.innerText = "❌ Ralat sambungan! Sila semak sambungan internet atau tetapan Google Script anda.";
         err.classList.remove("hidden");
       }
 

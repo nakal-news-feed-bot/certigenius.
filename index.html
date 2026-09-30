@@ -345,7 +345,8 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwey8ucxMJG_aMXkWHgcnt9sfise6ASQPoVIMNvXXBd_inHccvVvI4wQQtJhG-Rq5FB/exec";
+    // URL GOOGLE APPS SCRIPT BAHARU ANDA TELAH DIMASUKKAN SEPENUHNYA!
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb5xuBWrBFDWWKK-cTIWMa5-q1MEnexNfKq-HmUT9F7obHKzzEFKZmuHD1Uw1ZmlTF/exec";
 
     window.onload = function() {
       if (localStorage.getItem("certigenius_active_v46") === "true") {
@@ -372,16 +373,7 @@
 
       const callbackName = 'cb_' + Date.now();
 
-      // Setkan timeout keselamatan sekiranya pelayar menyekat tindak balas
-      const timeoutId = setTimeout(function() {
-        btn.disabled = false;
-        btn.innerText = "🔒 Aktifkan Lesen Sekarang";
-        err.innerText = "❌ Sambungan terputus atau URL Google Script memerlukan New Deployment.";
-        err.classList.remove("hidden");
-      }, 10000);
-
       window[callbackName] = function(data) {
-        clearTimeout(timeoutId);
         if (script.parentNode) script.parentNode.removeChild(script);
         delete window[callbackName];
 
@@ -389,7 +381,6 @@
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
 
         if (data && (data.status === "SUCCESS" || data.status === "ALREADY_USED")) {
-          // Kerana di Google Sheets status sudah bertukar USED, SUCCESS/ALREADY_USED mengesahkan kunci wujud
           localStorage.setItem("certigenius_active_v46", "true");
           document.getElementById("licenseModal").classList.add("hidden");
           document.getElementById("licenseStatusTag").innerText = "Aktif (Pro) 🔓";
@@ -403,10 +394,9 @@
       const script = document.createElement('script');
       script.src = `${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(input)}&callback=${callbackName}`;
       script.onerror = function() {
-        clearTimeout(timeoutId);
         btn.disabled = false;
         btn.innerText = "🔒 Aktifkan Lesen Sekarang";
-        err.innerText = "❌ Ralat sambungan! Semak pautan URL Google Apps Script anda.";
+        err.innerText = "❌ Ralat sambungan! Sila semak pautan URL Google Script anda.";
         err.classList.remove("hidden");
       };
 

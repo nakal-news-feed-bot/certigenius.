@@ -101,7 +101,7 @@
       min-height: 20px;
     }
 
-    /* Skrin Utam Aplikasi selepas Berjaya */
+    /* Skrin Utama Aplikasi selepas Pengaktifan Berjaya */
     #mainAppScreen {
       display: none;
     }
@@ -142,7 +142,7 @@
   </div>
 
   <script>
-    // Menyemak status pendaftaran terdahulu
+    // Menyemak status sesi (auto-login jika sudah pernah diaktifkan)
     window.onload = function() {
       const activeStatus = localStorage.getItem("certigenius_active");
       if (activeStatus === "true") {
@@ -157,7 +157,9 @@
     }
 
     async function verifyGumroadLicense(userLicenseKey) {
-      const PRODUCT_ID = "g20Mo93Czh17bi8RkkXN9g=="; 
+      // Product ID Rasmi Laman Jualan Gumroad Anda
+      const PRODUCT_ID = "brZIX-a4zsevaP5C49lO5A=="; 
+      
       const button = document.getElementById("activateBtn");
       const statusMsg = document.getElementById("statusMessage");
 
@@ -172,7 +174,7 @@
       if (button) button.disabled = true;
 
       try {
-        // Menggunakan CORS Proxy untuk mengelakkan isu browser blocking
+        // Menggunakan CORS Proxy untuk mengelakkan isu perantara browser blocking
         const proxyUrl = "https://corsproxy.io/?";
         const targetUrl = "https://api.gumroad.com/v2/licenses/verify";
 
@@ -217,3 +219,4 @@
   </script>
 </body>
 </html>
+

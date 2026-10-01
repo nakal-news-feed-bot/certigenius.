@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI Pro 4.6</title>
+  <title>CertiGenius AI Pro 4.6 - Penjana Sijil Automatik</title>
+  <!-- Library XLSX untuk membaca fail Excel/CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -15,22 +17,28 @@
     body {
       background-color: #0f172a;
       color: #f8fafc;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       padding: 20px;
     }
 
     .container {
       background-color: #1e293b;
-      padding: 40px;
+      padding: 30px;
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      max-width: 500px;
+      max-width: 900px;
       width: 100%;
-      text-align: center;
       border: 1px solid #334155;
+    }
+
+    /* SKRIN PENGAKTIFAN LESEN */
+    #licenseScreen {
+      max-width: 480px;
+      text-align: center;
+      margin: 0 auto;
     }
 
     h1 {
@@ -55,9 +63,10 @@
       font-size: 14px;
       margin-bottom: 8px;
       color: #cbd5e1;
+      font-weight: 600;
     }
 
-    input[type="text"] {
+    input[type="text"], input[type="file"], select {
       width: 100%;
       padding: 12px 16px;
       background-color: #0f172a;
@@ -66,11 +75,6 @@
       color: #ffffff;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input[type="text"]:focus {
-      border-color: #38bdf8;
     }
 
     button {
@@ -83,11 +87,11 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: background 0.2s;
     }
 
     button:hover {
-      opacity: 0.9;
+      opacity: 0.95;
     }
 
     button:disabled {
@@ -98,26 +102,81 @@
     #statusMessage {
       margin-top: 16px;
       font-size: 14px;
-      min-height: 20px;
       word-break: break-word;
     }
 
+    /* SKRIN UTAMA APLIKASI (PEMOIN & DASHBOARD) */
     #mainAppScreen {
       display: none;
     }
 
-    .dashboard-card {
-      background-color: #0f172a;
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .logout-btn {
+      width: auto;
+      padding: 8px 16px;
+      background: #ef4444;
+      font-size: 13px;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .control-panel {
+      background: #0f172a;
       padding: 20px;
       border-radius: 8px;
       border: 1px solid #334155;
-      margin-top: 20px;
+    }
+
+    .preview-panel {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+      border: 1px dashed #475569;
+      border-radius: 6px;
+      margin-top: 12px;
+      background-color: #ffffff;
+    }
+
+    .names-list {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
 
-  <!-- SKRIN PENGAKTIFAN LESEN -->
+  <!-- 1. SKRIN PENGAKTIFAN LESEN -->
   <div id="licenseScreen" class="container">
     <h1>CertiGenius AI Pro 4.6</h1>
     <p class="subtitle">Sistem Penjana Sijil Automatik & Pukal</p>
@@ -131,36 +190,72 @@
     <div id="statusMessage"></div>
   </div>
 
-  <!-- SKRIN UTAMA APLIKASI (HOME) -->
+  <!-- 2. SKRIN UTAMA APLIKASI (PEMUKAL SIJIL) -->
   <div id="mainAppScreen" class="container">
-    <h1>Selamat Datang ke CertiGenius AI Pro</h1>
-    <p class="subtitle">Pengaktifan Lesen Berjaya 🚀</p>
-    
-    <div class="dashboard-card">
-      <p>Aplikasi sedia untuk digunakan. Sila muat naik fail Excel/CSV senarai nama untuk mula menjana sijil pukal anda.</p>
+    <div class="app-header">
+      <div>
+        <h1>CertiGenius AI Pro 4.6</h1>
+        <p class="subtitle" style="margin-bottom:0;">Penjana Sijil Pukal Automatik</p>
+      </div>
+      <button class="logout-btn" onclick="logout()">Log Keluar</button>
+    </div>
+
+    <div class="grid-layout">
+      <!-- PANEL KAWALAN & INPUT -->
+      <div class="control-panel">
+        <div class="input-group">
+          <label>1. Muat Naik Fail Excel / CSV (.xlsx, .csv)</label>
+          <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" onchange="handleExcel(event)">
+          <div id="namesPreview" class="names-list" style="display:none;"></div>
+        </div>
+
+        <div class="input-group">
+          <label>2. Muat Naik Background Sijil (PNG / JPG)</label>
+          <input type="file" id="certBgInput" accept="image/*" onchange="handleCertBg(event)">
+        </div>
+
+        <div class="input-group">
+          <label>3. Saiz Tulisan Nama (Font Size)</label>
+          <input type="text" id="fontSizeInput" value="48" oninput="updatePreview()">
+        </div>
+
+        <div class="input-group">
+          <label>4. Kedudukan Y Nama (Jarak Atas/Bawah)</label>
+          <input type="text" id="posYInput" value="300" oninput="updatePreview()">
+        </div>
+
+        <button id="generateBtn" onclick="generateAllCertificates()" disabled>🚀 Jana & Muat Turun Semua Sijil</button>
+      </div>
+
+      <!-- PANEL PRATONTON -->
+      <div class="preview-panel">
+        <label>Pratonton Sijil Real-Time</label>
+        <canvas id="certCanvas" width="800" height="600"></canvas>
+      </div>
     </div>
   </div>
 
   <script>
-    // Menyemak jika pengguna sudah pernah mengaktifkan lesen
+    let parsedNames = [];
+    let bgImage = null;
+
+    // Semakan Sesi Lesen
     window.onload = function() {
       const activeStatus = localStorage.getItem("certigenius_active");
       if (activeStatus === "true") {
         document.getElementById("licenseScreen").style.display = "none";
         document.getElementById("mainAppScreen").style.display = "block";
+        initCanvas();
       }
     };
 
+    // Panggilan API Pengesahan Lesen Gumroad
     async function submitLicense() {
       const keyInput = document.getElementById("licenseKeyInput").value;
-      verifyGumroadLicense(keyInput);
-    }
-
-    async function verifyGumroadLicense(userLicenseKey) {
       const button = document.getElementById("activateBtn");
       const statusMsg = document.getElementById("statusMessage");
 
-      if (!userLicenseKey || userLicenseKey.trim() === "") {
+      if (!keyInput || keyInput.trim() === "") {
         statusMsg.style.color = "#f87171";
         statusMsg.innerText = "⚠️ Sila masukkan kunci lesen anda.";
         return;
@@ -168,18 +263,13 @@
 
       statusMsg.style.color = "#38bdf8";
       statusMsg.innerText = "⏳ Mengesahkan kunci lesen dengan Gumroad...";
-      if (button) button.disabled = true;
+      button.disabled = true;
 
       try {
-        // Panggilan terus ke Serverless Function Vercel (/api/verify)
         const response = await fetch("/api/verify", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            license_key: userLicenseKey.trim()
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ license_key: keyInput.trim() }),
         });
 
         const data = await response.json();
@@ -189,24 +279,142 @@
           statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
           
           localStorage.setItem("certigenius_active", "true");
-          localStorage.setItem("certigenius_key", userLicenseKey.trim());
+          localStorage.setItem("certigenius_key", keyInput.trim());
 
           setTimeout(() => {
             document.getElementById("licenseScreen").style.display = "none";
             document.getElementById("mainAppScreen").style.display = "block";
+            initCanvas();
           }, 1200);
 
         } else {
           statusMsg.style.color = "#f87171";
           statusMsg.innerText = "❌ " + (data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.");
-          if (button) button.disabled = false;
+          button.disabled = false;
         }
       } catch (error) {
-        console.error("Verification Error:", error);
         statusMsg.style.color = "#f87171";
         statusMsg.innerText = "⚠️ Terdapat masalah sambungan pelayan. Sila cuba lagi.";
-        if (button) button.disabled = false;
+        button.disabled = false;
       }
+    }
+
+    function logout() {
+      localStorage.removeItem("certigenius_active");
+      localStorage.removeItem("certigenius_key");
+      location.reload();
+    }
+
+    // Canvas & Pemprosesan Sijil
+    function initCanvas() {
+      const canvas = document.getElementById("certCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#000000";
+      ctx.font = "24px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Sila Muat Naik Latar Sijil", canvas.width / 2, canvas.height / 2);
+    }
+
+    function handleExcel(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        parsedNames = json.flat().filter(name => name && name.toString().trim() !== "");
+        
+        const previewDiv = document.getElementById("namesPreview");
+        previewDiv.style.display = "block";
+        previewDiv.innerHTML = `<strong>${parsedNames.length} Nama Ditemui:</strong><br>` + parsedNames.join(", ");
+        
+        checkReadyStatus();
+        updatePreview();
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function handleCertBg(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        bgImage = new Image();
+        bgImage.onload = function() {
+          const canvas = document.getElementById("certCanvas");
+          canvas.width = bgImage.width;
+          canvas.height = bgImage.height;
+          updatePreview();
+          checkReadyStatus();
+        };
+        bgImage.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updatePreview() {
+      const canvas = document.getElementById("certCanvas");
+      const ctx = canvas.getContext("2d");
+      const fontSize = document.getElementById("fontSizeInput").value || 48;
+      const posY = document.getElementById("posYInput").value || canvas.height / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (bgImage) {
+        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      const sampleName = parsedNames.length > 0 ? parsedNames[0] : "NAMA PESERTA CONTOH";
+
+      ctx.fillStyle = "#000000";
+      ctx.font = `bold ${fontSize}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(sampleName, canvas.width / 2, parseInt(posY));
+    }
+
+    function checkReadyStatus() {
+      const btn = document.getElementById("generateBtn");
+      if (parsedNames.length > 0 && bgImage) {
+        btn.disabled = false;
+      } else {
+        btn.disabled = true;
+      }
+    }
+
+    function generateAllCertificates() {
+      if (parsedNames.length === 0 || !bgImage) return;
+
+      const canvas = document.getElementById("certCanvas");
+      const ctx = canvas.getContext("2d");
+      const fontSize = document.getElementById("fontSizeInput").value || 48;
+      const posY = document.getElementById("posYInput").value || canvas.height / 2;
+
+      parsedNames.forEach((name, index) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#000000";
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(name, canvas.width / 2, parseInt(posY));
+
+        const link = document.createElement('a');
+        link.download = `Sijil_${name.toString().replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+
+      alert(`✅ Berjaya menjana ${parsedNames.length} sijil! Check folder Downloads anda.`);
     }
   </script>
 </body>

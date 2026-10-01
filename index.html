@@ -1,9 +1,8 @@
 async function verifyGumroadLicense(userLicenseKey) {
-  // Product ID rasmi dari akaun Gumroad anda
+  // Product ID rasmi akaun Gumroad anda
   const PRODUCT_ID = "g20Mo93Czh17bi8RkkXN9g=="; 
-
-  const button = document.getElementById("activateBtn"); // Butang Pengaktifan
-  const statusMsg = document.getElementById("statusMessage"); // Mesej Status
+  const button = document.getElementById("activateBtn"); 
+  const statusMsg = document.getElementById("statusMessage");
 
   if (!userLicenseKey || userLicenseKey.trim() === "") {
     statusMsg.innerText = "⚠️ Sila masukkan kunci lesen anda.";
@@ -22,31 +21,25 @@ async function verifyGumroadLicense(userLicenseKey) {
       body: new URLSearchParams({
         product_id: PRODUCT_ID,
         license_key: userLicenseKey.trim(),
-        increment_uses_count: "true" // Menanda kunci ini telah digunakan di Gumroad
+        increment_uses_count: "true"
       }),
     });
 
     const data = await response.json();
 
     if (data.success && !data.purchase.refunded && !data.purchase.chargebacked) {
-      // PENGESAHAN BERJAYA
       statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
-      
-      // Simpan status pengaktifan di browser pelanggan
       localStorage.setItem("certigenius_active", "true");
       localStorage.setItem("certigenius_key", userLicenseKey.trim());
 
       setTimeout(() => {
-        // Sembunyikan skrin lesen & paparkan aplikasi utama
         const licenseScreen = document.getElementById("licenseScreen");
         const mainAppScreen = document.getElementById("mainAppScreen");
-        
         if (licenseScreen) licenseScreen.style.display = "none";
         if (mainAppScreen) mainAppScreen.style.display = "block";
       }, 1500);
 
     } else {
-      // PENGESAHAN GAGAL
       statusMsg.innerText = "❌ Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
       if (button) button.disabled = false;
     }

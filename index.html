@@ -99,9 +99,9 @@
       margin-top: 16px;
       font-size: 14px;
       min-height: 20px;
+      word-break: break-word;
     }
 
-    /* Skrin Utama Aplikasi selepas Pengaktifan Berjaya */
     #mainAppScreen {
       display: none;
     }
@@ -142,7 +142,6 @@
   </div>
 
   <script>
-    // Menyemak status sesi (auto-login jika sudah pernah diaktifkan)
     window.onload = function() {
       const activeStatus = localStorage.getItem("certigenius_active");
       if (activeStatus === "true") {
@@ -157,9 +156,7 @@
     }
 
     async function verifyGumroadLicense(userLicenseKey) {
-      // Product ID Rasmi Laman Jualan Gumroad Anda
       const PRODUCT_ID = "brZIX-a4zsevaP5C49lO5A=="; 
-      
       const button = document.getElementById("activateBtn");
       const statusMsg = document.getElementById("statusMessage");
 
@@ -173,46 +170,59 @@
       statusMsg.innerText = "⏳ Mengesahkan kunci lesen dengan Gumroad...";
       if (button) button.disabled = true;
 
-      try {
-        // Menggunakan CORS Proxy untuk mengelakkan isu perantara browser blocking
-        const proxyUrl = "https://corsproxy.io/?";
-        const targetUrl = "https://api.gumroad.com/v2/licenses/verify";
+      const cleanKey = userLicenseKey.trim();
+      const targetUrl = "https://api.gumroad.com/v2/licenses/verify";
 
-        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            product_id: PRODUCT_ID,
-            license_key: userLicenseKey.trim(),
-            increment_uses_count: "true"
-          }),
-        });
+      // Senarai proxy sekiranya salah satu disekat pelayar
+      const proxies = [
+        "https://corsproxy.io/?",
+        "https://api.allorigins.win/raw?url="
+      ];
 
-        const data = await response.json();
+      let verified = false;
+      let lastError = "";
 
-        if (data.success && !data.purchase.refunded && !data.purchase.chargebacked) {
-          statusMsg.style.color = "#4ade80";
-          statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
-          
-          localStorage.setItem("certigenius_active", "true");
-          localStorage.setItem("certigenius_key", userLicenseKey.trim());
+      for (let proxy of proxies) {
+        try {
+          const response = await fetch(proxy + encodeURIComponent(targetUrl), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              product_id: PRODUCT_ID,
+              license_key: cleanKey,
+              increment_uses_count: "false"
+            }),
+          });
 
-          setTimeout(() => {
-            document.getElementById("licenseScreen").style.display = "none";
-            document.getElementById("mainAppScreen").style.display = "block";
-          }, 1500);
+          const data = await response.json();
 
-        } else {
-          statusMsg.style.color = "#f87171";
-          statusMsg.innerText = "❌ Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
-          if (button) button.disabled = false;
+          if (data.success && !data.purchase.refunded && !data.purchase.chargebacked) {
+            verified = true;
+            statusMsg.style.color = "#4ade80";
+            statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
+            
+            localStorage.setItem("certigenius_active", "true");
+            localStorage.setItem("certigenius_key", cleanKey);
+
+            setTimeout(() => {
+              document.getElementById("licenseScreen").style.display = "none";
+              document.getElementById("mainAppScreen").style.display = "block";
+            }, 1200);
+            break;
+          } else {
+            lastError = data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
+          }
+        } catch (err) {
+          console.error("Proxy Attempt Error:", err);
+          lastError = "Terdapat masalah sambungan rangkaian.";
         }
-      } catch (error) {
-        console.error("Error verifying license:", error);
+      }
+
+      if (!verified) {
         statusMsg.style.color = "#f87171";
-        statusMsg.innerText = "⚠️ Terdapat masalah sambungan. Sila cuba lagi.";
+        statusMsg.innerText = "❌ " + lastError;
         if (button) button.disabled = false;
       }
     }

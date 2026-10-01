@@ -171,35 +171,37 @@
       if (button) button.disabled = true;
 
       const cleanKey = userLicenseKey.trim();
-      const targetUrl = "https://api.gumroad.com/v2/licenses/verify";
 
-      // Senarai proxy sekiranya salah satu disekat pelayar
-      const proxies = [
-        "https://corsproxy.io/?",
-        "https://api.allorigins.win/raw?url="
+      // Menggunakan beberapa laluan proxy yang dipercayai secara berganti-ganti
+      const proxyRoutes = [
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`,
+        `https://thingproxy.freeboard.io/fetch/${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`,
+        `https://corsproxy.io/?${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`
       ];
 
-      let verified = false;
-      let lastError = "";
+      let successVerified = false;
+      let responseMessage = "";
 
-      for (let proxy of proxies) {
+      for (let targetProxyUrl of proxyRoutes) {
         try {
-          const response = await fetch(proxy + encodeURIComponent(targetUrl), {
+          const response = await fetch(targetProxyUrl, {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              "Content-Type": "application/x-www-form-urlencoded"
             },
             body: new URLSearchParams({
               product_id: PRODUCT_ID,
               license_key: cleanKey,
               increment_uses_count: "false"
-            }),
+            })
           });
+
+          if (!response.ok) continue;
 
           const data = await response.json();
 
           if (data.success && !data.purchase.refunded && !data.purchase.chargebacked) {
-            verified = true;
+            successVerified = true;
             statusMsg.style.color = "#4ade80";
             statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
             
@@ -212,17 +214,16 @@
             }, 1200);
             break;
           } else {
-            lastError = data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
+            responseMessage = data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
           }
         } catch (err) {
-          console.error("Proxy Attempt Error:", err);
-          lastError = "Terdapat masalah sambungan rangkaian.";
+          console.error("Connection attempt failed:", err);
         }
       }
 
-      if (!verified) {
+      if (!successVerified) {
         statusMsg.style.color = "#f87171";
-        statusMsg.innerText = "❌ " + lastError;
+        statusMsg.innerText = "❌ " + (responseMessage || "Kunci Lesen Tidak Sah atau Terdapat Masalah Sambungan.");
         if (button) button.disabled = false;
       }
     }

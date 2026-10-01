@@ -3,243 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI Pro 4.6 - Penjana Sijil Automatik</title>
-  <!-- Library XLSX untuk membaca fail Excel/CSV -->
+  <title>CertiGenius AI Pro 4.6 - Studio Penjana Sijil Automatik</title>
+  <!-- Google Fonts & Library Utama -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: #111827;
+      --card-bg: #1f2937;
+      --border-color: #374151;
+      --accent-blue: #0284c7;
+      --accent-cyan: #38bdf8;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
     }
 
-    body {
-      background-color: #0f172a;
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px; }
+
+    .app-container { width: 100%; max-width: 1400px; margin: 0 auto; }
+
+    /* 1. SKRIN AKTIVASI LESEN */
+    #licenseScreen { max-width: 460px; margin: 80px auto; background: var(--panel-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .badge { display: inline-block; background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.2); }
+    h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+
+    .input-group { text-align: left; margin-bottom: 16px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #d1d5db; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input[type="text"], select { width: 100%; padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 13px; outline: none; transition: all 0.2s; }
+    input[type="text"]:focus, select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+
+    .btn-primary { width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); }
+    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-primary:disabled { background: #4b5563; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    #statusMessage { margin-top: 16px; font-size: 13px; min-height: 20px; }
+
+    /* 2. SKRIN PEMUKA APLIKASI (DASHBOARD AI STUDIO) */
+    #mainAppScreen { display: none; }
+    
+    .top-navbar { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+    .brand-title { display: flex; align-items: center; gap: 12px; }
+    .brand-title h2 { font-size: 20px; font-weight: 700; color: #fff; }
+    .logout-btn { background: #374151; color: #f3f4f6; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .logout-btn:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    /* STATS CARDS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: var(--panel-bg); padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color); }
+    .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 18px; font-weight: 700; color: #fff; margin-top: 4px; }
+
+    /* WORKSPACE GRID */
+    .workspace-grid { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
+
+    @media (max-width: 1100px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
-    .container {
-      background-color: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      max-width: 900px;
-      width: 100%;
-      border: 1px solid #334155;
-    }
+    .studio-panel { background: var(--panel-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto; }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--accent-cyan); margin-top: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
 
-    /* SKRIN PENGAKTIFAN LESEN */
-    #licenseScreen {
-      max-width: 480px;
-      text-align: center;
-      margin: 0 auto;
-    }
+    .upload-box { border: 2px dashed var(--border-color); padding: 14px; border-radius: 8px; text-align: center; background: rgba(15, 23, 42, 0.6); cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
+    .upload-box:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.05); }
+    .upload-box p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .upload-box input[type="file"] { display: none; }
 
-    h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: #38bdf8;
-    }
+    .file-info { font-size: 12px; color: #4ade80; margin-top: 4px; font-weight: 600; display: none; }
+    .controls-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    p.subtitle {
-      font-size: 14px;
-      color: #94a3b8;
-      margin-bottom: 24px;
-    }
+    /* PREVIEW CANVAS AREA */
+    .canvas-container { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 550px; position: relative; }
+    canvas { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background: #ffffff; }
 
-    .input-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 8px;
-      color: #cbd5e1;
-      font-weight: 600;
-    }
-
-    input[type="text"], input[type="file"], select {
-      width: 100%;
-      padding: 12px 16px;
-      background-color: #0f172a;
-      border: 1px solid #475569;
-      border-radius: 6px;
-      color: #ffffff;
-      font-size: 14px;
-      outline: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #0284c7, #2563eb);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      opacity: 0.95;
-    }
-
-    button:disabled {
-      background: #64748b;
-      cursor: not-allowed;
-    }
-
-    #statusMessage {
-      margin-top: 16px;
-      font-size: 14px;
-      word-break: break-word;
-    }
-
-    /* SKRIN UTAMA APLIKASI (PEMOIN & DASHBOARD) */
-    #mainAppScreen {
-      display: none;
-    }
-
-    .app-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
-    }
-
-    .logout-btn {
-      width: auto;
-      padding: 8px 16px;
-      background: #ef4444;
-      font-size: 13px;
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .grid-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .control-panel {
-      background: #0f172a;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-    }
-
-    .preview-panel {
-      background: #0f172a;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      text-align: center;
-    }
-
-    canvas {
-      max-width: 100%;
-      height: auto;
-      border: 1px dashed #475569;
-      border-radius: 6px;
-      margin-top: 12px;
-      background-color: #ffffff;
-    }
-
-    .names-list {
-      max-height: 120px;
-      overflow-y: auto;
-      background: #1e293b;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-top: 8px;
-    }
+    .action-bar { display: flex; gap: 12px; margin-top: 16px; width: 100%; }
+    .btn-success { flex: 1; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
+    .btn-success:hover { opacity: 0.95; }
+    .btn-success:disabled { background: #4b5563; cursor: not-allowed; box-shadow: none; }
   </style>
 </head>
 <body>
 
-  <!-- 1. SKRIN PENGAKTIFAN LESEN -->
-  <div id="licenseScreen" class="container">
-    <h1>CertiGenius AI Pro 4.6</h1>
-    <p class="subtitle">Sistem Penjana Sijil Automatik & Pukal</p>
+  <div class="app-container">
 
-    <div class="input-group">
-      <label for="licenseKeyInput">Kunci Lesen (License Key)</label>
-      <input type="text" id="licenseKeyInput" placeholder="Masukkan Kunci Lesen Gumroad Anda">
-    </div>
+    <!-- 1. SKRIN AKTIVASI LESEN -->
+    <div id="licenseScreen">
+      <span class="badge">PRO VERSION 4.6</span>
+      <h1>CertiGenius AI Studio</h1>
+      <p class="subtitle">Sistem Penjana & Pengurusan Sijil Pukal</p>
 
-    <button id="activateBtn" onclick="submitLicense()">Aktifkan Aplikasi</button>
-    <div id="statusMessage"></div>
-  </div>
-
-  <!-- 2. SKRIN UTAMA APLIKASI (PEMUKAL SIJIL) -->
-  <div id="mainAppScreen" class="container">
-    <div class="app-header">
-      <div>
-        <h1>CertiGenius AI Pro 4.6</h1>
-        <p class="subtitle" style="margin-bottom:0;">Penjana Sijil Pukal Automatik</p>
-      </div>
-      <button class="logout-btn" onclick="logout()">Log Keluar</button>
-    </div>
-
-    <div class="grid-layout">
-      <!-- PANEL KAWALAN & INPUT -->
-      <div class="control-panel">
-        <div class="input-group">
-          <label>1. Muat Naik Fail Excel / CSV (.xlsx, .csv)</label>
-          <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" onchange="handleExcel(event)">
-          <div id="namesPreview" class="names-list" style="display:none;"></div>
-        </div>
-
-        <div class="input-group">
-          <label>2. Muat Naik Background Sijil (PNG / JPG)</label>
-          <input type="file" id="certBgInput" accept="image/*" onchange="handleCertBg(event)">
-        </div>
-
-        <div class="input-group">
-          <label>3. Saiz Tulisan Nama (Font Size)</label>
-          <input type="text" id="fontSizeInput" value="48" oninput="updatePreview()">
-        </div>
-
-        <div class="input-group">
-          <label>4. Kedudukan Y Nama (Jarak Atas/Bawah)</label>
-          <input type="text" id="posYInput" value="300" oninput="updatePreview()">
-        </div>
-
-        <button id="generateBtn" onclick="generateAllCertificates()" disabled>🚀 Jana & Muat Turun Semua Sijil</button>
+      <div class="input-group">
+        <label for="licenseKeyInput">KUNCI LESEN GUMROAD (LICENSE KEY)</label>
+        <input type="text" id="licenseKeyInput" placeholder="Contoh: 256AFE8A-AEE841A9-...">
       </div>
 
-      <!-- PANEL PRATONTON -->
-      <div class="preview-panel">
-        <label>Pratonton Sijil Real-Time</label>
-        <canvas id="certCanvas" width="800" height="600"></canvas>
-      </div>
+      <button id="activateBtn" class="btn-primary" onclick="submitLicense()">Aktifkan Studio Sekarang</button>
+      <div id="statusMessage"></div>
     </div>
+
+    <!-- 2. PEMUKA UTAMA APLIKASI (PRO DASHBOARD) -->
+    <div id="mainAppScreen">
+      
+      <!-- NAVBAR TOP -->
+      <div class="top-navbar">
+        <div class="brand-title">
+          <span class="badge" style="margin:0;">PRO ACTIVE</span>
+          <h2>CertiGenius AI Studio 4.6</h2>
+        </div>
+        <button class="logout-btn" onclick="logout()">Nyahaktif / Log Keluar</button>
+      </div>
+
+      <!-- CARDS STATISTIK -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">STATUS LESEN</div>
+          <div class="stat-value" style="color:#4ade80;">AKTIF (SEUMUR HIDUP)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">JUMLAH PESERTA</div>
+          <div class="stat-value" id="statNamesCount">0 Peserta</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">TEMPLAT SIJIL</div>
+          <div class="stat-value" id="statBgStatus" style="color:#f87171;">Belum Dimuat Naik</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">LOGO PENGANJUR</div>
+          <div class="stat-value" id="statLogoStatus" style="color:#f87171;">Belum Ada</div>
+        </div>
+      </div>
+
+      <!-- WORKSPACE STUDIO -->
+      <div class="workspace-grid">
+        
+        <!-- PANEL KAWALAN PANEL KIRI -->
+        <div class="studio-panel">
+          
+          <div class="section-title">📊 1. MUAT NAIK FAIL PESERTA (EXCEL/CSV)</div>
+          <div class="upload-box" onclick="document.getElementById('excelInput').click()">
+            📄 <strong>Klik / Drag Fail Senarai Nama (.xlsx, .csv)</strong>
+            <p>Pastikan nama peserta berada dalam Kolom A</p>
+            <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" onchange="handleExcel(event)">
+            <div id="excelFileInfo" class="file-info"></div>
+          </div>
+
+          <div class="section-title">🎨 2. TEMPLAT LATAR SIJIL</div>
+          <div class="upload-box" onclick="document.getElementById('certBgInput').click()">
+            🖼️ <strong>Muat Naik Background Sijil (PNG/JPG)</strong>
+            <p>Format Resolusi Tinggi / HD</p>
+            <input type="file" id="certBgInput" accept="image/*" onchange="handleCertBg(event)">
+            <div id="bgFileInfo" class="file-info"></div>
+          </div>
+
+          <div class="section-title">🏛️ 3. LOGO PENGANJUR / CAP RASMI</div>
+          <div class="upload-box" onclick="document.getElementById('logoInput').click()">
+            🛡️ <strong>Muat Naik Logo Penganjur (PNG Transparent)</strong>
+            <p>Akan dipaparkan pada sijil secara automatik</p>
+            <input type="file" id="logoInput" accept="image/*" onchange="handleLogo(event)">
+            <div id="logoFileInfo" class="file-info"></div>
+          </div>
+
+          <div class="controls-row">
+            <div class="input-group">
+              <label>SAIZ LOGO (PX)</label>
+              <input type="text" id="logoSizeInput" value="120" oninput="updatePreview()">
+            </div>
+            <div class="input-group">
+              <label>KEDUDUKAN Y LOGO</label>
+              <input type="text" id="logoPosYInput" value="80" oninput="updatePreview()">
+            </div>
+          </div>
+
+          <div class="section-title">📝 4. MAKLUMAT PENGANJUR & ACARA</div>
+          <div class="input-group">
+            <label>NAMA PENGANJUR / ORGANISASI</label>
+            <input type="text" id="organizerNameInput" value="Dianjurkan Oleh: Akademi AI Malaysia" oninput="updatePreview()">
+          </div>
+          <div class="input-group">
+            <label>TAJUK ACARA / BENGKEL</label>
+            <input type="text" id="eventNameInput" value="Bengkel Sijil Automatik 2026" oninput="updatePreview()">
+          </div>
+
+          <div class="section-title">👤 5. TETAPAN TULISAN NAMA PESERTA</div>
+          <div class="input-group">
+            <label>PILIHAN FONT</label>
+            <select id="fontFamilyInput" onchange="updatePreview()">
+              <option value="Cinzel">Cinzel (Klasik / Sijil Rasmi)</option>
+              <option value="Playfair Display">Playfair Display (Elegan / Premium)</option>
+              <option value="Inter">Inter (Moden / Bersih)</option>
+              <option value="Montserrat">Montserrat (Tegas / Korporat)</option>
+              <option value="Poppins">Poppins (Kemas)</option>
+            </select>
+          </div>
+
+          <div class="controls-row">
+            <div class="input-group">
+              <label>SAIZ FONT (PX)</label>
+              <input type="text" id="fontSizeInput" value="52" oninput="updatePreview()">
+            </div>
+            <div class="input-group">
+              <label>WARNA TEKS</label>
+              <input type="color" id="textColorInput" value="#1e293b" oninput="updatePreview()" style="height:38px; padding:2px; cursor:pointer;">
+            </div>
+          </div>
+
+          <div class="controls-row">
+            <div class="input-group">
+              <label>POSISI Y NAMA PESERTA</label>
+              <input type="text" id="posYInput" value="380" oninput="updatePreview()">
+            </div>
+            <div class="input-group">
+              <label>PENJAJARAN TEKS</label>
+              <select id="textAlignInput" onchange="updatePreview()">
+                <option value="center">Tengah (Center)</option>
+                <option value="left">Kiri (Left)</option>
+                <option value="right">Kanan (Right)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PANEL PRATONTON STUDIO KANAN -->
+        <div class="studio-panel" style="display:flex; flex-direction:column;">
+          <div class="section-title" style="margin-top:0;">👁️ PRATONTON STUDIO MASA-NYATA (LIVE PREVIEW)</div>
+          
+          <div class="canvas-container">
+            <canvas id="certCanvas" width="1000" height="700"></canvas>
+          </div>
+
+          <div class="action-bar">
+            <button id="generateBtn" class="btn-success" onclick="generateAllCertificates()" disabled>
+              🚀 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
   <script>
     let parsedNames = [];
     let bgImage = null;
+    let logoImage = null;
 
-    // Semakan Sesi Lesen
     window.onload = function() {
       const activeStatus = localStorage.getItem("certigenius_active");
       if (activeStatus === "true") {
@@ -249,7 +264,6 @@
       }
     };
 
-    // Panggilan API Pengesahan Lesen Gumroad
     async function submitLicense() {
       const keyInput = document.getElementById("licenseKeyInput").value;
       const button = document.getElementById("activateBtn");
@@ -276,7 +290,7 @@
 
         if (data.success && !data.purchase?.refunded && !data.purchase?.chargebacked) {
           statusMsg.style.color = "#4ade80";
-          statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
+          statusMsg.innerHTML = "✅ Lesen Sah! Membuka Studio...";
           
           localStorage.setItem("certigenius_active", "true");
           localStorage.setItem("certigenius_key", keyInput.trim());
@@ -285,7 +299,7 @@
             document.getElementById("licenseScreen").style.display = "none";
             document.getElementById("mainAppScreen").style.display = "block";
             initCanvas();
-          }, 1200);
+          }, 1000);
 
         } else {
           statusMsg.style.color = "#f87171";
@@ -305,16 +319,15 @@
       location.reload();
     }
 
-    // Canvas & Pemprosesan Sijil
     function initCanvas() {
       const canvas = document.getElementById("certCanvas");
       const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#1e293b";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#000000";
-      ctx.font = "24px Arial";
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "20px Inter";
       ctx.textAlign = "center";
-      ctx.fillText("Sila Muat Naik Latar Sijil", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("Sila Muat Naik Templat Latar Sijil Anda", canvas.width / 2, canvas.height / 2);
     }
 
     function handleExcel(e) {
@@ -330,10 +343,10 @@
 
         parsedNames = json.flat().filter(name => name && name.toString().trim() !== "");
         
-        const previewDiv = document.getElementById("namesPreview");
-        previewDiv.style.display = "block";
-        previewDiv.innerHTML = `<strong>${parsedNames.length} Nama Ditemui:</strong><br>` + parsedNames.join(", ");
-        
+        document.getElementById("excelFileInfo").style.display = "block";
+        document.getElementById("excelFileInfo").innerText = `✓ Fail Diterima: ${parsedNames.length} nama wujud.`;
+        document.getElementById("statNamesCount").innerText = `${parsedNames.length} Peserta`;
+
         checkReadyStatus();
         updatePreview();
       };
@@ -351,6 +364,12 @@
           const canvas = document.getElementById("certCanvas");
           canvas.width = bgImage.width;
           canvas.height = bgImage.height;
+
+          document.getElementById("bgFileInfo").style.display = "block";
+          document.getElementById("bgFileInfo").innerText = `✓ Templat Dimuat Naik (${bgImage.width}x${bgImage.height}px)`;
+          document.getElementById("statBgStatus").style.color = "#4ade80";
+          document.getElementById("statBgStatus").innerText = "Ready";
+
           updatePreview();
           checkReadyStatus();
         };
@@ -359,27 +378,83 @@
       reader.readAsDataURL(file);
     }
 
+    function handleLogo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        logoImage = new Image();
+        logoImage.onload = function() {
+          document.getElementById("logoFileInfo").style.display = "block";
+          document.getElementById("logoFileInfo").innerText = "✓ Logo Diterima";
+          document.getElementById("statLogoStatus").style.color = "#4ade80";
+          document.getElementById("statLogoStatus").innerText = "Ready";
+          updatePreview();
+        };
+        logoImage.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function updatePreview() {
       const canvas = document.getElementById("certCanvas");
       const ctx = canvas.getContext("2d");
-      const fontSize = document.getElementById("fontSizeInput").value || 48;
+
+      const fontFamily = document.getElementById("fontFamilyInput").value || "Cinzel";
+      const fontSize = document.getElementById("fontSizeInput").value || 52;
+      const textColor = document.getElementById("textColorInput").value || "#1e293b";
       const posY = document.getElementById("posYInput").value || canvas.height / 2;
+      const align = document.getElementById("textAlignInput").value || "center";
+
+      const organizerText = document.getElementById("organizerNameInput").value || "";
+      const eventText = document.getElementById("eventNameInput").value || "";
+
+      const logoSize = parseInt(document.getElementById("logoSizeInput").value) || 120;
+      const logoPosY = parseInt(document.getElementById("logoPosYInput").value) || 80;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (bgImage) {
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
       } else {
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "#1e293b";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Lukis Logo Penganjur
+      if (logoImage) {
+        const logoPosX = (canvas.width / 2) - (logoSize / 2);
+        ctx.drawImage(logoImage, logoPosX, logoPosY, logoSize, logoSize);
+      }
+
+      // Lukis Teks Penganjur & Acara
+      if (organizerText) {
+        ctx.fillStyle = textColor;
+        ctx.font = `18px Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(organizerText, canvas.width / 2, logoPosY + logoSize + 30);
       }
 
       const sampleName = parsedNames.length > 0 ? parsedNames[0] : "NAMA PESERTA CONTOH";
 
-      ctx.fillStyle = "#000000";
-      ctx.font = `bold ${fontSize}px Arial`;
-      ctx.textAlign = "center";
-      ctx.fillText(sampleName, canvas.width / 2, parseInt(posY));
+      let posX = canvas.width / 2;
+      if (align === "left") posX = canvas.width * 0.1;
+      if (align === "right") posX = canvas.width * 0.9;
+
+      // Lukis Nama Peserta
+      ctx.fillStyle = textColor;
+      ctx.font = `bold ${fontSize}px '${fontFamily}', serif`;
+      ctx.textAlign = align;
+      ctx.fillText(sampleName, posX, parseInt(posY));
+
+      // Lukis Teks Acara
+      if (eventText) {
+        ctx.fillStyle = textColor;
+        ctx.font = `italic 16px Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(eventText, canvas.width / 2, parseInt(posY) + 50);
+      }
     }
 
     function checkReadyStatus() {
@@ -391,30 +466,74 @@
       }
     }
 
-    function generateAllCertificates() {
+    async function generateAllCertificates() {
       if (parsedNames.length === 0 || !bgImage) return;
 
       const canvas = document.getElementById("certCanvas");
       const ctx = canvas.getContext("2d");
-      const fontSize = document.getElementById("fontSizeInput").value || 48;
-      const posY = document.getElementById("posYInput").value || canvas.height / 2;
 
-      parsedNames.forEach((name, index) => {
+      const fontFamily = document.getElementById("fontFamilyInput").value || "Cinzel";
+      const fontSize = document.getElementById("fontSizeInput").value || 52;
+      const textColor = document.getElementById("textColorInput").value || "#1e293b";
+      const posY = document.getElementById("posYInput").value || canvas.height / 2;
+      const align = document.getElementById("textAlignInput").value || "center";
+
+      const organizerText = document.getElementById("organizerNameInput").value || "";
+      const eventText = document.getElementById("eventNameInput").value || "";
+
+      const logoSize = parseInt(document.getElementById("logoSizeInput").value) || 120;
+      const logoPosY = parseInt(document.getElementById("logoPosYInput").value) || 80;
+
+      let posX = canvas.width / 2;
+      if (align === "left") posX = canvas.width * 0.1;
+      if (align === "right") posX = canvas.width * 0.9;
+
+      const zip = new JSZip();
+      const btn = document.getElementById("generateBtn");
+      btn.disabled = true;
+      btn.innerText = "⏳ Sedang Menjana Semua Sijil...";
+
+      for (let i = 0; i < parsedNames.length; i++) {
+        const name = parsedNames[i];
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#000000";
-        ctx.font = `bold ${fontSize}px Arial`;
-        ctx.textAlign = "center";
-        ctx.fillText(name, canvas.width / 2, parseInt(posY));
+        if (logoImage) {
+          const logoPosX = (canvas.width / 2) - (logoSize / 2);
+          ctx.drawImage(logoImage, logoPosX, logoPosY, logoSize, logoSize);
+        }
 
-        const link = document.createElement('a');
-        link.download = `Sijil_${name.toString().replace(/\s+/g, '_')}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
+        if (organizerText) {
+          ctx.fillStyle = textColor;
+          ctx.font = `18px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(organizerText, canvas.width / 2, logoPosY + logoSize + 30);
+        }
+
+        ctx.fillStyle = textColor;
+        ctx.font = `bold ${fontSize}px '${fontFamily}', serif`;
+        ctx.textAlign = align;
+        ctx.fillText(name, posX, parseInt(posY));
+
+        if (eventText) {
+          ctx.fillStyle = textColor;
+          ctx.font = `italic 16px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(eventText, canvas.width / 2, parseInt(posY) + 50);
+        }
+
+        const dataUrl = canvas.toDataURL("image/png");
+        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+        zip.file(`Sijil_${i+1}_${name.toString().replace(/[^a-zA-Z0-9]/g, '_')}.png`, base64Data, { base64: true });
+      }
+
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        saveAs(content, "CertiGenius_Sijil_Pukal.zip");
+        btn.disabled = false;
+        btn.innerText = "🚀 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)";
+        alert(`🎉 Berjaya menjana ${parsedNames.length} sijil! Fail ZIP telah dimuat turun.`);
       });
-
-      alert(`✅ Berjaya menjana ${parsedNames.length} sijil! Check folder Downloads anda.`);
     }
   </script>
 </body>

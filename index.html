@@ -142,6 +142,7 @@
   </div>
 
   <script>
+    // Menyemak jika pengguna sudah pernah mengaktifkan lesen
     window.onload = function() {
       const activeStatus = localStorage.getItem("certigenius_active");
       if (activeStatus === "true") {
@@ -156,7 +157,6 @@
     }
 
     async function verifyGumroadLicense(userLicenseKey) {
-      const PRODUCT_ID = "brZIX-a4zsevaP5C49lO5A=="; 
       const button = document.getElementById("activateBtn");
       const statusMsg = document.getElementById("statusMessage");
 
@@ -170,64 +170,44 @@
       statusMsg.innerText = "⏳ Mengesahkan kunci lesen dengan Gumroad...";
       if (button) button.disabled = true;
 
-      const cleanKey = userLicenseKey.trim();
+      try {
+        // Panggilan terus ke Serverless Function Vercel (/api/verify)
+        const response = await fetch("/api/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            license_key: userLicenseKey.trim()
+          }),
+        });
 
-      // Menggunakan beberapa laluan proxy yang dipercayai secara berganti-ganti
-      const proxyRoutes = [
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`,
-        `https://thingproxy.freeboard.io/fetch/${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`,
-        `https://corsproxy.io/?${encodeURIComponent("https://api.gumroad.com/v2/licenses/verify")}`
-      ];
+        const data = await response.json();
 
-      let successVerified = false;
-      let responseMessage = "";
+        if (data.success && !data.purchase?.refunded && !data.purchase?.chargebacked) {
+          statusMsg.style.color = "#4ade80";
+          statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
+          
+          localStorage.setItem("certigenius_active", "true");
+          localStorage.setItem("certigenius_key", userLicenseKey.trim());
 
-      for (let targetProxyUrl of proxyRoutes) {
-        try {
-          const response = await fetch(targetProxyUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({
-              product_id: PRODUCT_ID,
-              license_key: cleanKey,
-              increment_uses_count: "false"
-            })
-          });
+          setTimeout(() => {
+            document.getElementById("licenseScreen").style.display = "none";
+            document.getElementById("mainAppScreen").style.display = "block";
+          }, 1200);
 
-          if (!response.ok) continue;
-
-          const data = await response.json();
-
-          if (data.success && !data.purchase.refunded && !data.purchase.chargebacked) {
-            successVerified = true;
-            statusMsg.style.color = "#4ade80";
-            statusMsg.innerHTML = "✅ Lesen Sah! Membuka aplikasi...";
-            
-            localStorage.setItem("certigenius_active", "true");
-            localStorage.setItem("certigenius_key", cleanKey);
-
-            setTimeout(() => {
-              document.getElementById("licenseScreen").style.display = "none";
-              document.getElementById("mainAppScreen").style.display = "block";
-            }, 1200);
-            break;
-          } else {
-            responseMessage = data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.";
-          }
-        } catch (err) {
-          console.error("Connection attempt failed:", err);
+        } else {
+          statusMsg.style.color = "#f87171";
+          statusMsg.innerText = "❌ " + (data.message || "Kunci Lesen Tidak Sah atau Telah Dibatalkan.");
+          if (button) button.disabled = false;
         }
-      }
-
-      if (!successVerified) {
+      } catch (error) {
+        console.error("Verification Error:", error);
         statusMsg.style.color = "#f87171";
-        statusMsg.innerText = "❌ " + (responseMessage || "Kunci Lesen Tidak Sah atau Terdapat Masalah Sambungan.");
+        statusMsg.innerText = "⚠️ Terdapat masalah sambungan pelayan. Sila cuba lagi.";
         if (button) button.disabled = false;
       }
     }
   </script>
 </body>
 </html>
-

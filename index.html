@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CertiGenius AI Pro 4.6 - Studio Penjana Sijil Automatik</title>
-  <!-- Google Fonts & Library Utama -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <title>CertiGenius AI Pro CikguDigital - Studio Editor Sijil Pukal</title>
+  <!-- Google Fonts & Libraries -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;600;700&family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -22,224 +22,260 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px; }
+    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 16px; }
 
-    .app-container { width: 100%; max-width: 1400px; margin: 0 auto; }
+    .app-container { width: 100%; max-width: 1500px; margin: 0 auto; }
 
     /* 1. SKRIN AKTIVASI LESEN */
-    #licenseScreen { max-width: 460px; margin: 80px auto; background: var(--panel-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    #licenseScreen { max-width: 480px; margin: 80px auto; background: var(--panel-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
     .badge { display: inline-block; background: rgba(56, 189, 248, 0.1); color: var(--accent-cyan); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(56, 189, 248, 0.2); }
-    h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
     p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
 
-    .input-group { text-align: left; margin-bottom: 16px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: #d1d5db; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    input[type="text"], select { width: 100%; padding: 10px 12px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 13px; outline: none; transition: all 0.2s; }
-    input[type="text"]:focus, select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+    .input-group { text-align: left; margin-bottom: 14px; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #cbd5e1; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input[type="text"], select { width: 100%; padding: 8px 10px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 6px; color: #fff; font-size: 12px; outline: none; }
+    input[type="range"] { width: 100%; accent-color: var(--accent-cyan); }
 
-    .btn-primary { width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); }
-    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
-    .btn-primary:disabled { background: #4b5563; cursor: not-allowed; box-shadow: none; transform: none; }
+    .btn-primary { width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    #statusMessage { margin-top: 14px; font-size: 13px; min-height: 20px; }
 
-    #statusMessage { margin-top: 16px; font-size: 13px; min-height: 20px; }
-
-    /* 2. SKRIN PEMUKA APLIKASI (DASHBOARD AI STUDIO) */
+    /* 2. PEMUKA UTAMA STUDIO */
     #mainAppScreen { display: none; }
-    
-    .top-navbar { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+    .top-navbar { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px; }
     .brand-title { display: flex; align-items: center; gap: 12px; }
-    .brand-title h2 { font-size: 20px; font-weight: 700; color: #fff; }
-    .logout-btn { background: #374151; color: #f3f4f6; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .logout-btn:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+    .brand-title h2 { font-size: 18px; font-weight: 700; color: #fff; }
+    .logout-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
-    /* STATS CARDS */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: var(--panel-bg); padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color); }
-    .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-value { font-size: 18px; font-weight: 700; color: #fff; margin-top: 4px; }
+    /* LAYOUT STUDIO EDITOR */
+    .studio-layout { display: grid; grid-template-columns: 400px 1fr; gap: 16px; }
+    @media (max-width: 1100px) { .studio-layout { grid-template-columns: 1fr; } }
 
-    /* WORKSPACE GRID */
-    .workspace-grid { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
+    .editor-controls { background: var(--panel-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-top: 14px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; display: flex; justify-content: space-between; }
 
-    @media (max-width: 1100px) {
-      .workspace-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .studio-panel { background: var(--panel-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); max-height: 85vh; overflow-y: auto; }
-    .section-title { font-size: 14px; font-weight: 700; color: var(--accent-cyan); margin-top: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
-
-    .upload-box { border: 2px dashed var(--border-color); padding: 14px; border-radius: 8px; text-align: center; background: rgba(15, 23, 42, 0.6); cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
-    .upload-box:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.05); }
-    .upload-box p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .upload-box { border: 2px dashed var(--border-color); padding: 10px; border-radius: 6px; text-align: center; background: rgba(15, 23, 42, 0.6); cursor: pointer; margin-bottom: 10px; }
+    .upload-box p { font-size: 11px; color: var(--text-muted); }
     .upload-box input[type="file"] { display: none; }
+    .file-info { font-size: 11px; color: #4ade80; font-weight: 600; display: none; margin-top: 2px; }
 
-    .file-info { font-size: 12px; color: #4ade80; margin-top: 4px; font-weight: 600; display: none; }
-    .controls-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .slider-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .slider-item { background: rgba(0,0,0,0.2); padding: 6px; border-radius: 4px; border: 1px solid #1f2937; }
+    .slider-label { font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between; }
 
     /* PREVIEW CANVAS AREA */
-    .canvas-container { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 550px; position: relative; }
-    canvas { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background: #ffffff; }
+    .preview-section { background: var(--panel-bg); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; }
+    .canvas-container { background: #0b0f19; border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; text-align: center; width: 100%; display: flex; justify-content: center; min-height: 520px; overflow: auto; }
+    canvas { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); background: #ffffff; }
 
-    .action-bar { display: flex; gap: 12px; margin-top: 16px; width: 100%; }
-    .btn-success { flex: 1; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
-    .btn-success:hover { opacity: 0.95; }
-    .btn-success:disabled { background: #4b5563; cursor: not-allowed; box-shadow: none; }
+    .action-bar { display: flex; gap: 10px; margin-top: 16px; width: 100%; }
+    .btn-action { flex: 1; padding: 12px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; color: white; }
+    .btn-zip { background: linear-gradient(135deg, #10b981, #059669); }
+    .btn-zip:disabled { background: #4b5563; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
 
-    <!-- 1. SKRIN AKTIVASI LESEN -->
+    <!-- 1. SKRIN AKTIVASI LESEN GUMROAD -->
     <div id="licenseScreen">
-      <span class="badge">PRO VERSION 4.6</span>
-      <h1>CertiGenius AI Studio</h1>
+      <span class="badge">EDISI CIKGUDIGITAL</span>
+      <h1>CertiGenius AI Pro CikguDigital</h1>
       <p class="subtitle">Sistem Penjana & Pengurusan Sijil Pukal</p>
 
       <div class="input-group">
-        <label for="licenseKeyInput">KUNCI LESEN GUMROAD (LICENSE KEY)</label>
-        <input type="text" id="licenseKeyInput" placeholder="Contoh: 256AFE8A-AEE841A9-...">
+        <label for="licenseKeyInput">KUNCI LESEN GUMROAD</label>
+        <input type="text" id="licenseKeyInput" placeholder="Masukkan Kunci Lesen Anda">
       </div>
 
       <button id="activateBtn" class="btn-primary" onclick="submitLicense()">Aktifkan Studio Sekarang</button>
       <div id="statusMessage"></div>
     </div>
 
-    <!-- 2. PEMUKA UTAMA APLIKASI (PRO DASHBOARD) -->
+    <!-- 2. PEMUKA UTAMA STUDIO EDITOR -->
     <div id="mainAppScreen">
       
-      <!-- NAVBAR TOP -->
       <div class="top-navbar">
         <div class="brand-title">
-          <span class="badge" style="margin:0;">PRO ACTIVE</span>
-          <h2>CertiGenius AI Studio 4.6</h2>
+          <span class="badge" style="margin:0;">CIKGUDIGITAL PRO</span>
+          <h2>CertiGenius AI Pro CikguDigital - Studio Editor Sijil</h2>
         </div>
-        <button class="logout-btn" onclick="logout()">Nyahaktif / Log Keluar</button>
+        <button class="logout-btn" onclick="logout()">Log Keluar</button>
       </div>
 
-      <!-- CARDS STATISTIK -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">STATUS LESEN</div>
-          <div class="stat-value" style="color:#4ade80;">AKTIF (SEUMUR HIDUP)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">JUMLAH PESERTA</div>
-          <div class="stat-value" id="statNamesCount">0 Peserta</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">TEMPLAT SIJIL</div>
-          <div class="stat-value" id="statBgStatus" style="color:#f87171;">Belum Dimuat Naik</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">LOGO PENGANJUR</div>
-          <div class="stat-value" id="statLogoStatus" style="color:#f87171;">Belum Ada</div>
-        </div>
-      </div>
-
-      <!-- WORKSPACE STUDIO -->
-      <div class="workspace-grid">
+      <div class="studio-layout">
         
-        <!-- PANEL KAWALAN PANEL KIRI -->
-        <div class="studio-panel">
+        <!-- PANEL KAWALAN SLIDER & INPUT -->
+        <div class="editor-controls">
           
-          <div class="section-title">📊 1. MUAT NAIK FAIL PESERTA (EXCEL/CSV)</div>
+          <!-- 1. FAIL PESERTA & TEMPLAT -->
+          <div class="section-title">📊 1. FAIL PESERTA & LATAR SIJIL</div>
+          
           <div class="upload-box" onclick="document.getElementById('excelInput').click()">
-            📄 <strong>Klik / Drag Fail Senarai Nama (.xlsx, .csv)</strong>
-            <p>Pastikan nama peserta berada dalam Kolom A</p>
+            📄 <strong>Muat Naik Senarai Peserta (Excel/CSV)</strong>
+            <p>Tambah Peserta Secara Pukal</p>
             <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" onchange="handleExcel(event)">
             <div id="excelFileInfo" class="file-info"></div>
           </div>
 
-          <div class="section-title">🎨 2. TEMPLAT LATAR SIJIL</div>
           <div class="upload-box" onclick="document.getElementById('certBgInput').click()">
-            🖼️ <strong>Muat Naik Background Sijil (PNG/JPG)</strong>
-            <p>Format Resolusi Tinggi / HD</p>
+            🖼️ <strong>Muat Naik Templat Sijil (PNG/JPG)</strong>
+            <p>Latar Sijil Resolusi Tinggi</p>
             <input type="file" id="certBgInput" accept="image/*" onchange="handleCertBg(event)">
             <div id="bgFileInfo" class="file-info"></div>
           </div>
 
-          <div class="section-title">🏛️ 3. LOGO PENGANJUR / CAP RASMI</div>
+          <!-- 2. LOGO PENGANJUR -->
+          <div class="section-title">🏛 2. LOGO PENGANJUR / CAP</div>
           <div class="upload-box" onclick="document.getElementById('logoInput').click()">
-            🛡️ <strong>Muat Naik Logo Penganjur (PNG Transparent)</strong>
-            <p>Akan dipaparkan pada sijil secara automatik</p>
+            🛡️ <strong>Muat Naik Logo Penganjur (PNG)</strong>
             <input type="file" id="logoInput" accept="image/*" onchange="handleLogo(event)">
             <div id="logoFileInfo" class="file-info"></div>
           </div>
 
-          <div class="controls-row">
-            <div class="input-group">
-              <label>SAIZ LOGO (PX)</label>
-              <input type="text" id="logoSizeInput" value="120" oninput="updatePreview()">
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI X LOGO</span><span id="v_logoX">50%</span></div>
+              <input type="range" id="logoX" min="0" max="100" value="50" oninput="updatePreview()">
             </div>
-            <div class="input-group">
-              <label>KEDUDUKAN Y LOGO</label>
-              <input type="text" id="logoPosYInput" value="80" oninput="updatePreview()">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y LOGO</span><span id="v_logoY">100px</span></div>
+              <input type="range" id="logoY" min="0" max="800" value="100" oninput="updatePreview()">
             </div>
+          </div>
+          <div class="slider-item" style="margin-bottom:10px;">
+            <div class="slider-label"><span>SAIZ LOGO</span><span id="v_logoSize">120px</span></div>
+            <input type="range" id="logoSize" min="40" max="400" value="120" oninput="updatePreview()">
           </div>
 
-          <div class="section-title">📝 4. MAKLUMAT PENGANJUR & ACARA</div>
+          <!-- 3. NAMA PESERTA -->
+          <div class="section-title">👤 3. NAMA PESERTA</div>
           <div class="input-group">
-            <label>NAMA PENGANJUR / ORGANISASI</label>
-            <input type="text" id="organizerNameInput" value="Dianjurkan Oleh: Akademi AI Malaysia" oninput="updatePreview()">
-          </div>
-          <div class="input-group">
-            <label>TAJUK ACARA / BENGKEL</label>
-            <input type="text" id="eventNameInput" value="Bengkel Sijil Automatik 2026" oninput="updatePreview()">
-          </div>
-
-          <div class="section-title">👤 5. TETAPAN TULISAN NAMA PESERTA</div>
-          <div class="input-group">
-            <label>PILIHAN FONT</label>
+            <label>FONT NAMA PESERTA</label>
             <select id="fontFamilyInput" onchange="updatePreview()">
-              <option value="Cinzel">Cinzel (Klasik / Sijil Rasmi)</option>
-              <option value="Playfair Display">Playfair Display (Elegan / Premium)</option>
-              <option value="Inter">Inter (Moden / Bersih)</option>
-              <option value="Montserrat">Montserrat (Tegas / Korporat)</option>
-              <option value="Poppins">Poppins (Kemas)</option>
+              <option value="Cinzel">Cinzel (Rasmi / Sijil)</option>
+              <option value="Playfair Display">Playfair Display (Elegan)</option>
+              <option value="Inter">Inter (Moden)</option>
+              <option value="Montserrat">Montserrat (Tegas)</option>
             </select>
           </div>
 
-          <div class="controls-row">
-            <div class="input-group">
-              <label>SAIZ FONT (PX)</label>
-              <input type="text" id="fontSizeInput" value="52" oninput="updatePreview()">
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI X NAMA</span><span id="v_nameX">50%</span></div>
+              <input type="range" id="nameX" min="0" max="100" value="50" oninput="updatePreview()">
             </div>
-            <div class="input-group">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y NAMA</span><span id="v_nameY">380px</span></div>
+              <input type="range" id="nameY" min="0" max="1000" value="380" oninput="updatePreview()">
+            </div>
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>SAIZ FONT</span><span id="v_nameSize">52px</span></div>
+              <input type="range" id="nameSize" min="16" max="120" value="52" oninput="updatePreview()">
+            </div>
+            <div class="slider-item">
               <label>WARNA TEKS</label>
-              <input type="color" id="textColorInput" value="#1e293b" oninput="updatePreview()" style="height:38px; padding:2px; cursor:pointer;">
+              <input type="color" id="nameColor" value="#1e293b" oninput="updatePreview()" style="height:28px; padding:2px; cursor:pointer;">
             </div>
           </div>
 
-          <div class="controls-row">
-            <div class="input-group">
-              <label>POSISI Y NAMA PESERTA</label>
-              <input type="text" id="posYInput" value="380" oninput="updatePreview()">
+          <!-- 4. PENGANJUR & AKTIVITI -->
+          <div class="section-title">📝 4. PENGANJUR & AKTIVITI</div>
+          <div class="input-group">
+            <label>TEKS PENGANJUR</label>
+            <input type="text" id="organizerText" value="Dianjurkan Oleh: CikguDigital Malaysia" oninput="updatePreview()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y PENGANJUR</span><span id="v_orgY">260px</span></div>
+              <input type="range" id="orgY" min="0" max="800" value="260" oninput="updatePreview()">
             </div>
-            <div class="input-group">
-              <label>PENJAJARAN TEKS</label>
-              <select id="textAlignInput" onchange="updatePreview()">
-                <option value="center">Tengah (Center)</option>
-                <option value="left">Kiri (Left)</option>
-                <option value="right">Kanan (Right)</option>
-              </select>
+            <div class="slider-item">
+              <div class="slider-label"><span>SAIZ FONT</span><span id="v_orgSize">20px</span></div>
+              <input type="range" id="orgSize" min="10" max="50" value="20" oninput="updatePreview()">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>TAJUK AKTIVITI / PROGRAM</label>
+            <input type="text" id="activityText" value="Bengkel Pembangunan Web App AI 2026" oninput="updatePreview()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y AKTIVITI</span><span id="v_actY">460px</span></div>
+              <input type="range" id="actY" min="0" max="1000" value="460" oninput="updatePreview()">
+            </div>
+            <div class="slider-item">
+              <div class="slider-label"><span>SAIZ FONT</span><span id="v_actSize">18px</span></div>
+              <input type="range" id="actSize" min="10" max="50" value="18" oninput="updatePreview()">
+            </div>
+          </div>
+
+          <!-- 5. TARIKH & PENANDATANGAN -->
+          <div class="section-title">✍️ 5. TARIKH & PENANDATANGAN</div>
+          <div class="input-group">
+            <label>TARIKH & LOKASI</label>
+            <input type="text" id="dateText" value="15 Oktober 2026 | Kuala Lumpur" oninput="updatePreview()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI X TARIKH</span><span id="v_dateX">20%</span></div>
+              <input type="range" id="dateX" min="0" max="100" value="20" oninput="updatePreview()">
+            </div>
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y TARIKH</span><span id="v_dateY">600px</span></div>
+              <input type="range" id="dateY" min="0" max="1000" value="600" oninput="updatePreview()">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>NAMA PENANDATANGAN</label>
+            <input type="text" id="signerText" value="Dato' Dr. Ahmad (Pengarah CikguDigital)" oninput="updatePreview()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI X PENANDATANGAN</span><span id="v_signerX">80%</span></div>
+              <input type="range" id="signerX" min="0" max="100" value="80" oninput="updatePreview()">
+            </div>
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y PENANDATANGAN</span><span id="v_signerY">600px</span></div>
+              <input type="range" id="signerY" min="0" max="1000" value="600" oninput="updatePreview()">
+            </div>
+          </div>
+
+          <!-- 6. NO AUTENTIK SIJIL -->
+          <div class="section-title">🔐 6. NO AUTENTIK / SIRI SIJIL</div>
+          <div class="input-group">
+            <label>PREFIX NOMBOR SIRI</label>
+            <input type="text" id="certSerialPrefix" value="CD-2026-" oninput="updatePreview()">
+          </div>
+          <div class="slider-row">
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI X NO SIRI</span><span id="v_serialX">85%</span></div>
+              <input type="range" id="serialX" min="0" max="100" value="85" oninput="updatePreview()">
+            </div>
+            <div class="slider-item">
+              <div class="slider-label"><span>POSISI Y NO SIRI</span><span id="v_serialY">50px</span></div>
+              <input type="range" id="serialY" min="0" max="1000" value="50" oninput="updatePreview()">
             </div>
           </div>
 
         </div>
 
-        <!-- PANEL PRATONTON STUDIO KANAN -->
-        <div class="studio-panel" style="display:flex; flex-direction:column;">
-          <div class="section-title" style="margin-top:0;">👁️ PRATONTON STUDIO MASA-NYATA (LIVE PREVIEW)</div>
+        <!-- PANEL PRATONTON STUDIO -->
+        <div class="preview-section">
+          <div class="section-title" style="width:100%;">👁️️ PRATONTON STUDIO INTERAKTIF</div>
           
           <div class="canvas-container">
             <canvas id="certCanvas" width="1000" height="700"></canvas>
           </div>
 
           <div class="action-bar">
-            <button id="generateBtn" class="btn-success" onclick="generateAllCertificates()" disabled>
-              🚀 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)
+            <button id="generateBtn" class="btn-action btn-zip" onclick="generateAllCertificates()" disabled>
+              📦 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)
             </button>
           </div>
         </div>
@@ -325,7 +361,7 @@
       ctx.fillStyle = "#1e293b";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "20px Inter";
+      ctx.font = "18px Inter";
       ctx.textAlign = "center";
       ctx.fillText("Sila Muat Naik Templat Latar Sijil Anda", canvas.width / 2, canvas.height / 2);
     }
@@ -344,8 +380,7 @@
         parsedNames = json.flat().filter(name => name && name.toString().trim() !== "");
         
         document.getElementById("excelFileInfo").style.display = "block";
-        document.getElementById("excelFileInfo").innerText = `✓ Fail Diterima: ${parsedNames.length} nama wujud.`;
-        document.getElementById("statNamesCount").innerText = `${parsedNames.length} Peserta`;
+        document.getElementById("excelFileInfo").innerText = `✓ Diterima: ${parsedNames.length} peserta.`;
 
         checkReadyStatus();
         updatePreview();
@@ -367,8 +402,6 @@
 
           document.getElementById("bgFileInfo").style.display = "block";
           document.getElementById("bgFileInfo").innerText = `✓ Templat Dimuat Naik (${bgImage.width}x${bgImage.height}px)`;
-          document.getElementById("statBgStatus").style.color = "#4ade80";
-          document.getElementById("statBgStatus").innerText = "Ready";
 
           updatePreview();
           checkReadyStatus();
@@ -388,8 +421,6 @@
         logoImage.onload = function() {
           document.getElementById("logoFileInfo").style.display = "block";
           document.getElementById("logoFileInfo").innerText = "✓ Logo Diterima";
-          document.getElementById("statLogoStatus").style.color = "#4ade80";
-          document.getElementById("statLogoStatus").innerText = "Ready";
           updatePreview();
         };
         logoImage.src = evt.target.result;
@@ -401,17 +432,52 @@
       const canvas = document.getElementById("certCanvas");
       const ctx = canvas.getContext("2d");
 
-      const fontFamily = document.getElementById("fontFamilyInput").value || "Cinzel";
-      const fontSize = document.getElementById("fontSizeInput").value || 52;
-      const textColor = document.getElementById("textColorInput").value || "#1e293b";
-      const posY = document.getElementById("posYInput").value || canvas.height / 2;
-      const align = document.getElementById("textAlignInput").value || "center";
+      const logoX = parseInt(document.getElementById("logoX").value);
+      const logoY = parseInt(document.getElementById("logoY").value);
+      const logoSize = parseInt(document.getElementById("logoSize").value);
 
-      const organizerText = document.getElementById("organizerNameInput").value || "";
-      const eventText = document.getElementById("eventNameInput").value || "";
+      const nameX = parseInt(document.getElementById("nameX").value);
+      const nameY = parseInt(document.getElementById("nameY").value);
+      const nameSize = parseInt(document.getElementById("nameSize").value);
+      const nameColor = document.getElementById("nameColor").value;
+      const fontFamily = document.getElementById("fontFamilyInput").value;
 
-      const logoSize = parseInt(document.getElementById("logoSizeInput").value) || 120;
-      const logoPosY = parseInt(document.getElementById("logoPosYInput").value) || 80;
+      const organizerText = document.getElementById("organizerText").value;
+      const orgY = parseInt(document.getElementById("orgY").value);
+      const orgSize = parseInt(document.getElementById("orgSize").value);
+
+      const activityText = document.getElementById("activityText").value;
+      const actY = parseInt(document.getElementById("actY").value);
+      const actSize = parseInt(document.getElementById("actSize").value);
+
+      const dateText = document.getElementById("dateText").value;
+      const dateX = parseInt(document.getElementById("dateX").value);
+      const dateY = parseInt(document.getElementById("dateY").value);
+
+      const signerText = document.getElementById("signerText").value;
+      const signerX = parseInt(document.getElementById("signerX").value);
+      const signerY = parseInt(document.getElementById("signerY").value);
+
+      const certSerialPrefix = document.getElementById("certSerialPrefix").value;
+      const serialX = parseInt(document.getElementById("serialX").value);
+      const serialY = parseInt(document.getElementById("serialY").value);
+
+      document.getElementById("v_logoX").innerText = logoX + "%";
+      document.getElementById("v_logoY").innerText = logoY + "px";
+      document.getElementById("v_logoSize").innerText = logoSize + "px";
+      document.getElementById("v_nameX").innerText = nameX + "%";
+      document.getElementById("v_nameY").innerText = nameY + "px";
+      document.getElementById("v_nameSize").innerText = nameSize + "px";
+      document.getElementById("v_orgY").innerText = orgY + "px";
+      document.getElementById("v_orgSize").innerText = orgSize + "px";
+      document.getElementById("v_actY").innerText = actY + "px";
+      document.getElementById("v_actSize").innerText = actSize + "px";
+      document.getElementById("v_dateX").innerText = dateX + "%";
+      document.getElementById("v_dateY").innerText = dateY + "px";
+      document.getElementById("v_signerX").innerText = signerX + "%";
+      document.getElementById("v_signerY").innerText = signerY + "px";
+      document.getElementById("v_serialX").innerText = serialX + "%";
+      document.getElementById("v_serialY").innerText = serialY + "px";
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -422,39 +488,49 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      // Lukis Logo Penganjur
       if (logoImage) {
-        const logoPosX = (canvas.width / 2) - (logoSize / 2);
-        ctx.drawImage(logoImage, logoPosX, logoPosY, logoSize, logoSize);
+        const logoPosX = (canvas.width * (logoX / 100)) - (logoSize / 2);
+        ctx.drawImage(logoImage, logoPosX, logoY, logoSize, logoSize);
       }
 
-      // Lukis Teks Penganjur & Acara
       if (organizerText) {
-        ctx.fillStyle = textColor;
-        ctx.font = `18px Inter, sans-serif`;
+        ctx.fillStyle = nameColor;
+        ctx.font = `${orgSize}px Inter, sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(organizerText, canvas.width / 2, logoPosY + logoSize + 30);
+        ctx.fillText(organizerText, canvas.width / 2, orgY);
       }
 
       const sampleName = parsedNames.length > 0 ? parsedNames[0] : "NAMA PESERTA CONTOH";
+      ctx.fillStyle = nameColor;
+      ctx.font = `bold ${nameSize}px '${fontFamily}', serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(sampleName, canvas.width * (nameX / 100), nameY);
 
-      let posX = canvas.width / 2;
-      if (align === "left") posX = canvas.width * 0.1;
-      if (align === "right") posX = canvas.width * 0.9;
-
-      // Lukis Nama Peserta
-      ctx.fillStyle = textColor;
-      ctx.font = `bold ${fontSize}px '${fontFamily}', serif`;
-      ctx.textAlign = align;
-      ctx.fillText(sampleName, posX, parseInt(posY));
-
-      // Lukis Teks Acara
-      if (eventText) {
-        ctx.fillStyle = textColor;
-        ctx.font = `italic 16px Inter, sans-serif`;
+      if (activityText) {
+        ctx.fillStyle = nameColor;
+        ctx.font = `italic ${actSize}px Inter, sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(eventText, canvas.width / 2, parseInt(posY) + 50);
+        ctx.fillText(activityText, canvas.width / 2, actY);
       }
+
+      if (dateText) {
+        ctx.fillStyle = nameColor;
+        ctx.font = `14px Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(dateText, canvas.width * (dateX / 100), dateY);
+      }
+
+      if (signerText) {
+        ctx.fillStyle = nameColor;
+        ctx.font = `bold 14px Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(signerText, canvas.width * (signerX / 100), signerY);
+      }
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "12px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(certSerialPrefix + "001", canvas.width * (serialX / 100), serialY);
     }
 
     function checkReadyStatus() {
@@ -472,21 +548,35 @@
       const canvas = document.getElementById("certCanvas");
       const ctx = canvas.getContext("2d");
 
-      const fontFamily = document.getElementById("fontFamilyInput").value || "Cinzel";
-      const fontSize = document.getElementById("fontSizeInput").value || 52;
-      const textColor = document.getElementById("textColorInput").value || "#1e293b";
-      const posY = document.getElementById("posYInput").value || canvas.height / 2;
-      const align = document.getElementById("textAlignInput").value || "center";
+      const logoX = parseInt(document.getElementById("logoX").value);
+      const logoY = parseInt(document.getElementById("logoY").value);
+      const logoSize = parseInt(document.getElementById("logoSize").value);
 
-      const organizerText = document.getElementById("organizerNameInput").value || "";
-      const eventText = document.getElementById("eventNameInput").value || "";
+      const nameX = parseInt(document.getElementById("nameX").value);
+      const nameY = parseInt(document.getElementById("nameY").value);
+      const nameSize = parseInt(document.getElementById("nameSize").value);
+      const nameColor = document.getElementById("nameColor").value;
+      const fontFamily = document.getElementById("fontFamilyInput").value;
 
-      const logoSize = parseInt(document.getElementById("logoSizeInput").value) || 120;
-      const logoPosY = parseInt(document.getElementById("logoPosYInput").value) || 80;
+      const organizerText = document.getElementById("organizerText").value;
+      const orgY = parseInt(document.getElementById("orgY").value);
+      const orgSize = parseInt(document.getElementById("orgSize").value);
 
-      let posX = canvas.width / 2;
-      if (align === "left") posX = canvas.width * 0.1;
-      if (align === "right") posX = canvas.width * 0.9;
+      const activityText = document.getElementById("activityText").value;
+      const actY = parseInt(document.getElementById("actY").value);
+      const actSize = parseInt(document.getElementById("actSize").value);
+
+      const dateText = document.getElementById("dateText").value;
+      const dateX = parseInt(document.getElementById("dateX").value);
+      const dateY = parseInt(document.getElementById("dateY").value);
+
+      const signerText = document.getElementById("signerText").value;
+      const signerX = parseInt(document.getElementById("signerX").value);
+      const signerY = parseInt(document.getElementById("signerY").value);
+
+      const certSerialPrefix = document.getElementById("certSerialPrefix").value;
+      const serialX = parseInt(document.getElementById("serialX").value);
+      const serialY = parseInt(document.getElementById("serialY").value);
 
       const zip = new JSZip();
       const btn = document.getElementById("generateBtn");
@@ -495,43 +585,63 @@
 
       for (let i = 0; i < parsedNames.length; i++) {
         const name = parsedNames[i];
+        const serialNo = certSerialPrefix + String(i + 1).padStart(3, '0');
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
         if (logoImage) {
-          const logoPosX = (canvas.width / 2) - (logoSize / 2);
-          ctx.drawImage(logoImage, logoPosX, logoPosY, logoSize, logoSize);
+          const logoPosX = (canvas.width * (logoX / 100)) - (logoSize / 2);
+          ctx.drawImage(logoImage, logoPosX, logoY, logoSize, logoSize);
         }
 
         if (organizerText) {
-          ctx.fillStyle = textColor;
-          ctx.font = `18px Inter, sans-serif`;
+          ctx.fillStyle = nameColor;
+          ctx.font = `${orgSize}px Inter, sans-serif`;
           ctx.textAlign = "center";
-          ctx.fillText(organizerText, canvas.width / 2, logoPosY + logoSize + 30);
+          ctx.fillText(organizerText, canvas.width / 2, orgY);
         }
 
-        ctx.fillStyle = textColor;
-        ctx.font = `bold ${fontSize}px '${fontFamily}', serif`;
-        ctx.textAlign = align;
-        ctx.fillText(name, posX, parseInt(posY));
+        ctx.fillStyle = nameColor;
+        ctx.font = `bold ${nameSize}px '${fontFamily}', serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(name, canvas.width * (nameX / 100), nameY);
 
-        if (eventText) {
-          ctx.fillStyle = textColor;
-          ctx.font = `italic 16px Inter, sans-serif`;
+        if (activityText) {
+          ctx.fillStyle = nameColor;
+          ctx.font = `italic ${actSize}px Inter, sans-serif`;
           ctx.textAlign = "center";
-          ctx.fillText(eventText, canvas.width / 2, parseInt(posY) + 50);
+          ctx.fillText(activityText, canvas.width / 2, actY);
         }
+
+        if (dateText) {
+          ctx.fillStyle = nameColor;
+          ctx.font = `14px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(dateText, canvas.width * (dateX / 100), dateY);
+        }
+
+        if (signerText) {
+          ctx.fillStyle = nameColor;
+          ctx.font = `bold 14px Inter, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(signerText, canvas.width * (signerX / 100), signerY);
+        }
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "12px monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(serialNo, canvas.width * (serialX / 100), serialY);
 
         const dataUrl = canvas.toDataURL("image/png");
         const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
-        zip.file(`Sijil_${i+1}_${name.toString().replace(/[^a-zA-Z0-9]/g, '_')}.png`, base64Data, { base64: true });
+        zip.file(`Sijil_${serialNo}_${name.toString().replace(/[^a-zA-Z0-9]/g, '_')}.png`, base64Data, { base64: true });
       }
 
       zip.generateAsync({ type: "blob" }).then(function(content) {
-        saveAs(content, "CertiGenius_Sijil_Pukal.zip");
+        saveAs(content, "CertiGenius_CikguDigital_Sijil_Pukal.zip");
         btn.disabled = false;
-        btn.innerText = "🚀 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)";
+        btn.innerText = "📦 JANA & MUAT TURUN SEMUA SIJIL (ZIP PUKAL)";
         alert(`🎉 Berjaya menjana ${parsedNames.length} sijil! Fail ZIP telah dimuat turun.`);
       });
     }
